@@ -27,6 +27,7 @@
         <activity android:name=".FindIdActivity"/>
         <activity android:name=".FindPwActivity"/>
         <meta-data android:name="android.max_aspect" android:value="2.1" />
+
         android:usesCleartextTraffic="true"
 
     </application>

@@ -1,5 +1,6 @@
 package com.example.eggo_project;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -63,14 +64,19 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             boolean success = jsonObject.getBoolean("success");  //php의 success
+
                             if(success) { // 로그인에 성공한 경우
                                 String userID = jsonObject.getString("userID");
                                 String userPassword = jsonObject.getString("userPassword");
+                                String userName = jsonObject.getString("userName");
 
-                                Toast.makeText(getApplicationContext(), "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Toast.makeText( getApplicationContext(), String.format("%s님 환영합니다.", userName), Toast.LENGTH_SHORT ).show();
+                                Intent intent = new Intent( LoginActivity.this, HomeActivity.class );
+
                                 intent.putExtra("userID", userID);
                                 intent.putExtra("userPassword", userPassword);
+                                intent.putExtra("userName", userName);
+
                                 startActivity(intent);
                             } else { // 로그인에 실패한 경우
                                 Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
