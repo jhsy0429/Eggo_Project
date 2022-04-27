@@ -2,6 +2,7 @@ package com.example.eggo_project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,7 +24,7 @@ public class FindIdActivity extends AppCompatActivity {
         btn_login2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FindIdActivity.this,MainActivity.class);
+                Intent intent = new Intent(FindIdActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });

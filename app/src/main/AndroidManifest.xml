@@ -12,7 +12,8 @@
         android:label="Eggo"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity"/>
 
         <activity android:name=".LoginActivity">
@@ -26,9 +27,9 @@
         <activity android:name=".FindActivity"/>
         <activity android:name=".FindIdActivity"/>
         <activity android:name=".FindPwActivity"/>
+        <activity android:name=".HomeActivity"/>
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
-        android:usesCleartextTraffic="true"
 
     </application>
 

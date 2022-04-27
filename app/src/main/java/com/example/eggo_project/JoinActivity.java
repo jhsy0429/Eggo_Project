@@ -3,6 +3,7 @@ package com.example.eggo_project;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +24,7 @@ import org.json.JSONObject;
 
 public class JoinActivity extends AppCompatActivity {
 
-    private EditText edit_join_id, edit_join_pw, edit_join_pwck, edit_join_name, edit_join_email;
+    private TextInputEditText edit_join_id, edit_join_pw, edit_join_pwck, edit_join_name, edit_join_email;
     private Button btn_check, btn_join2;
     private boolean validate = false;
     private AlertDialog dialog;
@@ -69,6 +71,8 @@ public class JoinActivity extends AppCompatActivity {
                                 dialog = builder.setMessage("사용할 수 있는 아이디입니다.").setPositiveButton("확인", null).create();
                                 dialog.show();
                                 validate = true; //검증 완료
+                                btn_check.setEnabled(false);
+                                btn_check.setBackgroundColor(Color.GRAY);
                                 btn_check.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                             }
                             else {
