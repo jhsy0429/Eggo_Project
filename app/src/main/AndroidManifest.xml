@@ -28,6 +28,7 @@
         <activity android:name=".FindIdActivity"/>
         <activity android:name=".FindPwActivity"/>
         <activity android:name=".HomeActivity"/>
+        <activity android:name=".ModifyActivity"/>
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
 
