@@ -2,27 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/menu_bill_reg"
-        android:title="고지서 등록"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/menu_bill_in"
-        android:title="고지서 조회"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/menu_bill_pre"
-        android:title="고지서 예측"
-        app:showAsAction="always"/>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_bill_reg"
+            android:title="고지서 등록"
+            app:showAsAction="always" />
 
-    <item
-        android:id="@+id/menu_eggo_ai"
-        android:title="Eggo AI"
-        app:showAsAction="always"/>
+        <item
+            android:id="@+id/menu_bill_in"
+            android:title="고지서 조회"
+            app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/menu_energy_save"
-        android:title="에너지 절약법"
-        app:showAsAction="always"/>
+        <item
+            android:id="@+id/menu_bill_pre"
+            android:title="고지서 예측"
+            app:showAsAction="always"/>
+
+        <item
+            android:id="@+id/menu_eggo_ai"
+            android:title="Eggo AI"
+            app:showAsAction="always"/>
+
+        <item
+            android:id="@+id/menu_energy_save"
+            android:title="에너지 절약법"
+            app:showAsAction="always"/>
+    </group>
 
 </menu>

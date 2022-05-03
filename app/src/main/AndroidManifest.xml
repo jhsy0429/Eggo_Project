@@ -29,6 +29,11 @@
         <activity android:name=".FindPwActivity"/>
         <activity android:name=".HomeActivity"/>
         <activity android:name=".ModifyActivity"/>
+        <activity android:name=".RegistrationActivity"/>
+        <activity android:name=".PredictionActivity"/>
+        <activity android:name=".InquiryActivity"/>
+        <activity android:name=".EggoaiActivity"/>
+        <activity android:name=".EnergyActivity"/>
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
 
