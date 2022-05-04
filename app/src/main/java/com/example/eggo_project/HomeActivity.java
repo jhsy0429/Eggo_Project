@@ -158,6 +158,7 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
+        // 고지서 등록
         btn_bill_reg = (Button)findViewById(R.id.btn_bill_reg);
         btn_bill_reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +168,7 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
+        // 고지서 조회
         btn_bill_in = (Button)findViewById(R.id.btn_bill_in);
         btn_bill_in.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +178,7 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
+        // 고지서 예측
         btn_bill_pre = (Button)findViewById(R.id.btn_bill_pre);
         btn_bill_pre.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +188,7 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
+        // EggoAI
         btn_eggo_ai = (Button)findViewById(R.id.btn_eggo_ai);
         btn_eggo_ai.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +198,7 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
+        //에너지 절약법
         btn_energy_save = (Button)findViewById(R.id.btn_energy_save);
         btn_energy_save.setOnClickListener(new View.OnClickListener() {
             @Override
