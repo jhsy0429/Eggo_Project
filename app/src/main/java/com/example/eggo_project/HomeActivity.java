@@ -32,7 +32,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class HomeActivity extends AppCompatActivity  {
 
-    private Button btn_look, btn_modify;
+    private Button btn_look, btn_bill_reg, btn_bill_in, btn_bill_pre, btn_eggo_ai, btn_energy_save;
 
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -153,7 +153,52 @@ public class HomeActivity extends AppCompatActivity  {
         btn_look.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,JoinActivity.class);
+                Intent intent = new Intent(HomeActivity.this,DetailActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_bill_reg = (Button)findViewById(R.id.btn_bill_reg);
+        btn_bill_reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,RegistrationActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_bill_in = (Button)findViewById(R.id.btn_bill_in);
+        btn_bill_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,InquiryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_bill_pre = (Button)findViewById(R.id.btn_bill_pre);
+        btn_bill_pre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,PredictionActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_eggo_ai = (Button)findViewById(R.id.btn_eggo_ai);
+        btn_eggo_ai.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,EggoaiActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_energy_save = (Button)findViewById(R.id.btn_energy_save);
+        btn_energy_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this,EnergyActivity.class);
                 startActivity(intent);
             }
         });

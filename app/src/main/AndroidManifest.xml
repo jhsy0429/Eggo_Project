@@ -34,6 +34,7 @@
         <activity android:name=".InquiryActivity"/>
         <activity android:name=".EggoaiActivity"/>
         <activity android:name=".EnergyActivity"/>
+        <activity android:name=".DetailActivity"/>
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
 
