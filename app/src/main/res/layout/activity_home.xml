@@ -131,18 +131,34 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:orientation="vertical">
+            android:layout_height="450dp"
+            android:orientation="vertical"
+            android:background="@drawable/border_line"
+            android:layout_marginTop="20dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            tools:context=".HomeActivity">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
-                android:layout_marginLeft="40dp"
-                android:text="토글버튼자리"
-                android:textSize="25dp" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="1dp"
+                android:background="@android:color/background_light"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                app:tabTextColor="@color/colorDark"
+                app:tabSelectedTextColor="@color/colorPrimary" />
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_below="@id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+            </FrameLayout>
 
         </LinearLayout>
 
@@ -156,6 +172,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="center"
+                android:layout_marginTop="150dp"
                 android:layout_weight="1">
 
                 <Button

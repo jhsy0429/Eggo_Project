@@ -26,8 +26,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 
 public class HomeActivity extends AppCompatActivity  {
@@ -37,6 +39,11 @@ public class HomeActivity extends AppCompatActivity  {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+
+    private TabLayout tabs;
+    private AllFragment fragment_all;
+    private ElectFragment fragment_elect;
+    private WaterFragment fragment_water;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,6 +212,45 @@ public class HomeActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this,EnergyActivity.class);
                 startActivity(intent);
+            }
+        });
+
+
+        // 프레그먼트 설정
+
+        fragment_all = new AllFragment();
+        fragment_elect = new ElectFragment();
+        fragment_water = new WaterFragment();
+
+        getSupportFragmentManager().beginTransaction().add(R.id.container, fragment_all).commit();
+
+        tabs = findViewById(R.id.tabs);
+        tabs.addTab(tabs.newTab().setText("전체"));
+        tabs.addTab(tabs.newTab().setText("전기"));
+        tabs.addTab(tabs.newTab().setText("수도"));
+
+        tabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                Fragment selected = null;
+                if(position == 0)
+                    selected = fragment_all;
+                else if(position == 1)
+                    selected = fragment_elect;
+                else if(position == 2)
+                    selected = fragment_water;
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, selected).commit();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
