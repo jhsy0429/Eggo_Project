@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.eggo_project.HttpConnection.SpringConnection;
+import com.example.eggo_project.HttpConnection.UserDTO;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -47,6 +49,23 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final String userID = edit_join_id.getText().toString();
+
+                Thread th = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("아이디 체크 시도");
+                        SpringConnection sc = new SpringConnection();
+                        String query = "?userId="+userID;
+
+                        String Message = sc.HttpConnGETUser("Main/CheckId"+query);
+                        System.out.println(Message);
+                    }
+                });
+                th.start();
+
+
+
+
                 if(validate) {
                     return; //검증완료
                 }
@@ -58,36 +77,34 @@ public class JoinActivity extends AppCompatActivity {
                     return;
                 }
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-
-                            JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
-
-                            if (success) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage("사용할 수 있는 아이디입니다.").setPositiveButton("확인", null).create();
-                                dialog.show();
-                                validate = true; //검증 완료
-                                btn_check.setEnabled(false);
-                                btn_check.setBackgroundColor(Color.GRAY);
-                                btn_check.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                            }
-                            else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setNegativeButton("확인", null).create();
-                                dialog.show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                ValidateRequest validateRequest = new ValidateRequest(userID, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(JoinActivity.this);
-                queue.add(validateRequest);
+//
+//                Response.Listener<String> responseListener = new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        try {
+//
+//                            JSONObject jsonResponse = new JSONObject(response);
+//                            boolean success = jsonResponse.getBoolean("success");
+//
+//                            if (success) {
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+//                                dialog = builder.setMessage("사용할 수 있는 아이디입니다.").setPositiveButton("확인", null).create();
+//                                dialog.show();
+//                                validate = true; //검증 완료
+//                                btn_check.setEnabled(false);
+//                                btn_check.setBackgroundColor(Color.GRAY);
+//                                btn_check.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+//                            }
+//                            else {
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+//                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setNegativeButton("확인", null).create();
+//                                dialog.show();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                };
             }
         });
 
@@ -100,20 +117,19 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // EditText에 현재 입력되어 있는 값을 가져온다(get).
-                String userID = edit_join_id.getText().toString();
+                final String userID = edit_join_id.getText().toString();
                 final String userPassword = edit_join_pw.getText().toString();
                 final String userName = edit_join_name.getText().toString();
-                String userEmail = edit_join_email.getText().toString();
-                final String passcheck = edit_join_pwck.getText().toString();
+                final String userEmail = edit_join_email.getText().toString();
 
-                //아이디 중복체크 했는지 확인
-                if (!validate) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                    dialog = builder.setMessage("중복된 아이디가 있는지 확인하세요.").setNegativeButton("확인", null).create();
-                    dialog.show();
-                    return;
-                }
-
+//                //아이디 중복체크 했는지 확인
+//                if (!validate) {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+//                    dialog = builder.setMessage("중복된 아이디가 있는지 확인하세요.").setNegativeButton("확인", null).create();
+//                    dialog.show();
+//                    return;
+//                }
+//
                 //한 칸이라도 입력 안했을 경우
                 if (userID.equals("") || userPassword.equals("") || userName.equals("") || userEmail.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
@@ -123,46 +139,16 @@ public class JoinActivity extends AppCompatActivity {
                 }
 
 
-
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                Thread th = new Thread(new Runnable(){
                     @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");  //php의 success
-
-                            //회원가입 성공시
-                            if(userPassword.equals(passcheck)) {
-                                if (success) {
-
-                                    Toast.makeText(getApplicationContext(), String.format("%s님 가입을 환영합니다.", userName), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-
-                                    //회원가입 실패시
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage("비밀번호가 동일하지 않습니다.").setNegativeButton("확인", null).create();
-                                dialog.show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
+                    public void run() {
+                        SpringConnection sc = new SpringConnection();
+                        UserDTO userDTO = new UserDTO(userID, userName, userEmail, userPassword);
+                        String Message = sc.HttpConnPOSTUser("Main/SignUp", userDTO) + "님 회원가입 완료.";
+                        System.out.println(Message);
                     }
-                };
-
-                // 서버로 Volley를 이용해서 요청을 함.
-                RegisterRequest registerRequest = new RegisterRequest(userID, userPassword, userName, userEmail, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(JoinActivity.this);
-                queue.add(registerRequest);
-
-
+                });
+                th.start();
             }
         });
     }
