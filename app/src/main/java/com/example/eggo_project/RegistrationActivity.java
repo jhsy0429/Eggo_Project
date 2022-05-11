@@ -24,6 +24,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         imageView = (ImageView)findViewById(R.id.imageView);
         btn_camera.setOnClickListener(this);
 
+        btn_photo = (Button)findViewById(R.id.btn_photo);
+
     }
 
     @Override
