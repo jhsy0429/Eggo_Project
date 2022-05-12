@@ -30,14 +30,14 @@ public class AllFragment extends Fragment {
 
         ArrayList<Entry> values = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 6; i++) {
 
             float val = (float) (Math.random() * 10);
             values.add(new Entry(i, val));
         }
 
         LineDataSet set1;
-        set1 = new LineDataSet(values, "DataSet 1");
+        set1 = new LineDataSet(values, "전체");
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1); // add the data sets

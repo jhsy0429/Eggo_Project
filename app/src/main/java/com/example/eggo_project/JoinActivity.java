@@ -59,6 +59,8 @@ public class JoinActivity extends AppCompatActivity {
 
                         String Message = sc.HttpConnGETUser("Main/CheckId"+query);
                         System.out.println(Message);
+
+
                     }
                 });
                 th.start();
@@ -121,6 +123,15 @@ public class JoinActivity extends AppCompatActivity {
                 final String userPassword = edit_join_pw.getText().toString();
                 final String userName = edit_join_name.getText().toString();
                 final String userEmail = edit_join_email.getText().toString();
+                final String userPasswordck = edit_join_pwck.getText().toString();
+
+                // 비밀번호와 비밀번호 확인이 일치하지 않을 경우
+                if (!userPassword.equals("") && !userPasswordck.equals("") && userPassword != userPasswordck) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+                    dialog = builder.setMessage("비밀번호가 일치하지 않습니다.").setNegativeButton("확인", null).create();
+                    dialog.show();
+                    return;
+                }
 
 //                //아이디 중복체크 했는지 확인
 //                if (!validate) {
