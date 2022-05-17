@@ -7,6 +7,8 @@ public class UserDTO {
     private String Password;
     private String Name;
 
+    private boolean isRight = false; //중복체크
+
     public UserDTO(){
 
     }
@@ -41,5 +43,13 @@ public class UserDTO {
     }
     public void setPassword(String password) {
         Password = password;
+    }
+
+    public boolean isRight() {
+        return isRight;
+    }
+
+    public void setRight(boolean right) {
+        isRight = right;
     }
 }
