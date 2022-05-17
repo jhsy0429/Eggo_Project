@@ -1,35 +1,24 @@
 package com.example.eggo_project;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-import com.example.eggo_project.HttpConnection.SpringConnection;
-import com.example.eggo_project.HttpConnection.UserDTO;
-import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
+import com.example.eggo_project.RetrofitConnection.UserDTO;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class JoinActivity extends AppCompatActivity {
@@ -60,23 +49,27 @@ public class JoinActivity extends AppCompatActivity {
                 final String userID = edit_join_id.getText().toString();
 
                 //Retrofit GET
-                Call<JsonObject> call = retrofitClient.retrofitAPI.getId(userID);
+                Call<JsonObject> call = retrofitClient.retrofitAPI.checkId(userID);
                 call.enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                         // 서버와 통신 성공시
                         if (response.isSuccessful()){
-                            String message = response.body().get("message").getAsString();
-                            if(message == "이미 존재하는 아이디입니다.") {
+                            String result = response.body().get("result").getAsString();
+
+                            Log.d("연결이 성공적 : ", response.body().toString());
+
+
+                            if(result == "fail") {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage(message).setPositiveButton("확인",null).create();
+                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setPositiveButton("확인",null).create();
                                 dialog.show();
                                 validate = false;
                                 return;
                             }
-                            else if (message == "“사용 가능한 아이디입니다.”") {
+                            else if (result == "success") {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage(message).setPositiveButton("확인",null).create();
+                                dialog = builder.setMessage("사용 가능한 아이디입니다.").setPositiveButton("확인",null).create();
                                 dialog.show();
                                 validate = true;
                                 return;
@@ -138,9 +131,9 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // EditText에 현재 입력되어 있는 값을 가져온다(get).
                 final String userID = edit_join_id.getText().toString();
-                final String userPassword = edit_join_pw.getText().toString();
                 final String userName = edit_join_name.getText().toString();
                 final String userEmail = edit_join_email.getText().toString();
+                final String userPassword = edit_join_pw.getText().toString();
                 final String userPasswordck = edit_join_pwck.getText().toString();
 
 
@@ -161,7 +154,31 @@ public class JoinActivity extends AppCompatActivity {
                     return;
                 }
 
-                // 로그인 화면으로 이동
+                // Retrofit POST
+                HashMap<String, String> user = new HashMap<>();
+                user.put("UserID", userID);
+                user.put("Name", userName);
+                user.put("Email", userEmail);
+                user.put("Password", userPassword);
+                Call<UserDTO> call = retrofitClient.retrofitAPI.SignUp(user);
+                call.enqueue(new Callback<UserDTO>() {
+                    @Override
+                    public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                        if(response.isSuccessful()) {
+                            // 로그인 화면으로 이동
+                            Intent intent = new Intent(JoinActivity.this,LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserDTO> call, Throwable t) {
+
+                    }
+                });
+
+
+
 
 
 
