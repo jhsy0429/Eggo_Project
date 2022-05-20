@@ -14,6 +14,7 @@ import com.example.eggo_project.RetrofitConnection.JoinData;
 import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
+import com.example.eggo_project.RetrofitConnection.UserCheck;
 import com.example.eggo_project.RetrofitConnection.UserDTO;
 import com.example.eggo_project.RetrofitConnection.UserPost;
 import com.google.android.material.textfield.TextInputEditText;
@@ -55,80 +56,38 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final String userID = edit_join_id.getText().toString();
 
-                HashMap<String, String> map = new HashMap<>();
-                map.put("UserId", userID);
+                Call<UserCheck> call = retrofitClient.retrofitAPI.checkId(userID);
+                call.enqueue(new Callback<UserCheck>() {
+                    @Override
+                    public void onResponse(Call<UserCheck> call, Response<UserCheck> response) {
+                        if (response.isSuccessful()) {
+                            UserCheck result = response.body();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+                            if (result.getResult().equals("success")) {
+                                dialog = builder.setMessage("사용가능한 아이디입니다.").setPositiveButton("확인",null).create();
+                                dialog.show();
+                                validate = true;
+                            }
+                            else if (result.getResult().equals("fail")) {
+                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setPositiveButton("확인",null).create();
+                                dialog.show();
+                                validate = false;
+                            }
+                            else {
+                                dialog = builder.setMessage(result.getResult()).setPositiveButton("확인",null).create();
+                                dialog.show();
+                                validate = true;
+                            }
 
-               Call<JsonObject> call = retrofitClient.retrofitAPI.checkId(map);
-               call.enqueue(new Callback<JsonObject>() {
-                   @Override
-                   public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                       if(response.isSuccessful()) {
-                           JsonObject jsonObject = response.body();
-                           JsonArray jsonArray = jsonObject.getAsJsonArray("List");
+                        }
+                    }
 
-                           if(jsonArray.size()>0) {
-                               String result = jsonArray.get(0).getAsJsonObject().get("result").getAsString();
+                    @Override
+                    public void onFailure(Call<UserCheck> call, Throwable t) {
 
-                               if(result.equals("success")) {
-                                   Toast.makeText(getApplicationContext(), "사용 가능한 아이디입니다.", Toast.LENGTH_SHORT).show();
-                                   validate = true;
-                               }
-                               else {
-                                   Toast.makeText(getApplicationContext(), "이미 존재하는 아이디입니다.", Toast.LENGTH_SHORT).show();
-                                   validate = false;
-                               }
-                           }
-                       }
-                       else {
+                    }
+                });
 
-                       }
-                   }
-
-                   @Override
-                   public void onFailure(Call<JsonObject> call, Throwable t) {
-
-                   }
-               });
-
-
-
-//
-//                //Retrofit GET
-//                Call<JsonObject> call = retrofitClient.retrofitAPI.checkId(userID);
-//                call.enqueue(new Callback<JsonObject>() {
-//                    @Override
-//                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-//                        // 서버와 통신 성공시
-//                        if (response.isSuccessful()){
-//                            String result = response.body().get("result").getAsString();
-//
-//                            Log.d("연결이 성공적 : ", response.body().toString());
-//
-//
-//                            if(result == "fail") {
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-//                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setPositiveButton("확인",null).create();
-//                                dialog.show();
-//                                validate = false;
-//                                return;
-//                            }
-//                            else if (result == "success") {
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-//                                dialog = builder.setMessage("사용 가능한 아이디입니다.").setPositiveButton("확인",null).create();
-//                                dialog.show();
-//                                validate = true;
-//                                return;
-//                            }
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<JsonObject> call, Throwable t) {
-//                        // 서버와 통신 실패시
-//                        t.printStackTrace();
-//                    }
-//                });
 
 
 
