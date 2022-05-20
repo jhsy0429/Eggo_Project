@@ -6,12 +6,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.eggo_project.RetrofitConnection.JoinData;
+import com.example.eggo_project.RetrofitConnection.JoinResponse;
+import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.example.eggo_project.RetrofitConnection.UserDTO;
+import com.example.eggo_project.RetrofitConnection.UserPost;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -27,6 +33,7 @@ public class JoinActivity extends AppCompatActivity {
     private Button btn_check, btn_join2;
     private boolean validate = false;
     private AlertDialog dialog;
+    private RetrofitClient retrofitClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,42 +55,80 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final String userID = edit_join_id.getText().toString();
 
-                //Retrofit GET
-                Call<JsonObject> call = retrofitClient.retrofitAPI.checkId(userID);
-                call.enqueue(new Callback<JsonObject>() {
-                    @Override
-                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                        // 서버와 통신 성공시
-                        if (response.isSuccessful()){
-                            String result = response.body().get("result").getAsString();
+                HashMap<String, String> map = new HashMap<>();
+                map.put("UserId", userID);
 
-                            Log.d("연결이 성공적 : ", response.body().toString());
+               Call<JsonObject> call = retrofitClient.retrofitAPI.checkId(map);
+               call.enqueue(new Callback<JsonObject>() {
+                   @Override
+                   public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                       if(response.isSuccessful()) {
+                           JsonObject jsonObject = response.body();
+                           JsonArray jsonArray = jsonObject.getAsJsonArray("List");
+
+                           if(jsonArray.size()>0) {
+                               String result = jsonArray.get(0).getAsJsonObject().get("result").getAsString();
+
+                               if(result.equals("success")) {
+                                   Toast.makeText(getApplicationContext(), "사용 가능한 아이디입니다.", Toast.LENGTH_SHORT).show();
+                                   validate = true;
+                               }
+                               else {
+                                   Toast.makeText(getApplicationContext(), "이미 존재하는 아이디입니다.", Toast.LENGTH_SHORT).show();
+                                   validate = false;
+                               }
+                           }
+                       }
+                       else {
+
+                       }
+                   }
+
+                   @Override
+                   public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                   }
+               });
 
 
-                            if(result == "fail") {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setPositiveButton("확인",null).create();
-                                dialog.show();
-                                validate = false;
-                                return;
-                            }
-                            else if (result == "success") {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                                dialog = builder.setMessage("사용 가능한 아이디입니다.").setPositiveButton("확인",null).create();
-                                dialog.show();
-                                validate = true;
-                                return;
-                            }
-                        }
 
-                    }
-
-                    @Override
-                    public void onFailure(Call<JsonObject> call, Throwable t) {
-                        // 서버와 통신 실패시
-                        t.printStackTrace();
-                    }
-                });
+//
+//                //Retrofit GET
+//                Call<JsonObject> call = retrofitClient.retrofitAPI.checkId(userID);
+//                call.enqueue(new Callback<JsonObject>() {
+//                    @Override
+//                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+//                        // 서버와 통신 성공시
+//                        if (response.isSuccessful()){
+//                            String result = response.body().get("result").getAsString();
+//
+//                            Log.d("연결이 성공적 : ", response.body().toString());
+//
+//
+//                            if(result == "fail") {
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+//                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setPositiveButton("확인",null).create();
+//                                dialog.show();
+//                                validate = false;
+//                                return;
+//                            }
+//                            else if (result == "success") {
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+//                                dialog = builder.setMessage("사용 가능한 아이디입니다.").setPositiveButton("확인",null).create();
+//                                dialog.show();
+//                                validate = true;
+//                                return;
+//                            }
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<JsonObject> call, Throwable t) {
+//                        // 서버와 통신 실패시
+//                        t.printStackTrace();
+//                    }
+//                });
 
 
 
@@ -129,12 +174,7 @@ public class JoinActivity extends AppCompatActivity {
         btn_join2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // EditText에 현재 입력되어 있는 값을 가져온다(get).
-                final String userID = edit_join_id.getText().toString();
-                final String userName = edit_join_name.getText().toString();
-                final String userEmail = edit_join_email.getText().toString();
-                final String userPassword = edit_join_pw.getText().toString();
-                final String userPasswordck = edit_join_pwck.getText().toString();
+                attemptJoin();
 
 
 
@@ -147,35 +187,40 @@ public class JoinActivity extends AppCompatActivity {
 //                }
 //
                 //한 칸이라도 입력 안했을 경우
-                if (userID.equals("") || userPassword.equals("") || userName.equals("") || userEmail.equals("")) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
-                    dialog = builder.setMessage("정보를 모두 입력해주세요.").setNegativeButton("확인", null).create();
-                    dialog.show();
-                    return;
-                }
+//                if (userID.equals("") || userPassword.equals("") || userName.equals("") || userEmail.equals("")) {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+//                    dialog = builder.setMessage("정보를 모두 입력해주세요.").setNegativeButton("확인", null).create();
+//                    dialog.show();
+//                    return;
+//                }
 
                 // Retrofit POST
-                HashMap<String, String> user = new HashMap<>();
-                user.put("UserID", userID);
-                user.put("Name", userName);
-                user.put("Email", userEmail);
-                user.put("Password", userPassword);
-                Call<UserDTO> call = retrofitClient.retrofitAPI.SignUp(user);
-                call.enqueue(new Callback<UserDTO>() {
-                    @Override
-                    public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
-                        if(response.isSuccessful()) {
-                            // 로그인 화면으로 이동
-                            Intent intent = new Intent(JoinActivity.this,LoginActivity.class);
-                            startActivity(intent);
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<UserDTO> call, Throwable t) {
 
-                    }
-                });
+
+
+
+//                HashMap<String, String> user = new HashMap<>();
+//                user.put("UserID", userID);
+//                user.put("Name", userName);
+//                user.put("Email", userEmail);
+//                user.put("Password", userPassword);
+//                Call<UserDTO> call = retrofitClient.retrofitAPI.SignUp(user);
+//                call.enqueue(new Callback<UserDTO>() {
+//                    @Override
+//                    public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+//                        if(response.isSuccessful()) {
+//                            // 로그인 화면으로 이동
+//                            Intent intent = new Intent(JoinActivity.this,LoginActivity.class);
+//                            startActivity(intent);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<UserDTO> call, Throwable t) {
+//
+//                    }
+//                });
 
 
 
@@ -196,4 +241,100 @@ public class JoinActivity extends AppCompatActivity {
             }
         });
     }
+
+    // 회원가입 데이터 유효성 검사
+    private void attemptJoin() {
+        edit_join_pw.setError(null);
+        edit_join_email.setError(null);
+        edit_join_name.setError(null);
+
+        final String userID = edit_join_id.getText().toString();
+        final String userName = edit_join_name.getText().toString();
+        final String userEmail = edit_join_email.getText().toString();
+        final String userPassword = edit_join_pw.getText().toString();
+        final String userPasswordck = edit_join_pwck.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // 패스워드의 유효성 검사
+        if (userPassword.isEmpty()) {
+            edit_join_pw.setError("비밀번호를 입력해주세요.");
+            focusView = edit_join_pw;
+            cancel = true;
+        } else if (!isPasswordValid(userPassword)) {
+            edit_join_pw.setError("6자 이상의 비밀번호를 입력해주세요.");
+            focusView = edit_join_pw;
+            cancel = true;
+        }
+
+        // 이메일의 유효성 검사
+        if (userEmail.isEmpty()) {
+            edit_join_email.setError("이메일을 입력해주세요.");
+            focusView = edit_join_email;
+            cancel = true;
+        } else if (!isEmailValid(userEmail)) {
+            edit_join_email.setError("@를 포함한 유효한 이메일을 입력해주세요.");
+            focusView = edit_join_email;
+            cancel = true;
+        }
+
+        // 이름의 유효성 검사
+        if (userName.isEmpty()) {
+            edit_join_name.setError("이름을 입력해주세요.");
+            focusView = edit_join_name;
+            cancel = true;
+        }
+
+        // 비밀번호 체크
+        if(!userPassword.equals(userPasswordck)) {
+            edit_join_pwck.setError("비밀번호가 일치하지 않습니다.");
+            focusView = edit_join_pwck;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            startJoin(new JoinData(userID, userName, userEmail, userPassword));
+            showProgress(true);
+        }
+    }
+
+    private void startJoin(JoinData data) {
+        Call<JoinResponse> call = retrofitClient.retrofitAPI.SignUp(data);
+
+        call.enqueue(new Callback<JoinResponse>() {
+            @Override
+            public void onResponse(Call<JoinResponse> call, Response<JoinResponse> response) {
+                JoinResponse result = response.body();
+                Toast.makeText(JoinActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                showProgress(false);
+
+                if (result.getResult() == "success") {
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JoinResponse> call, Throwable t) {
+                Toast.makeText(JoinActivity.this, "회원가입 에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("회원가입 에러 발생", t.getMessage());
+                showProgress(false);
+            }
+        });
+    }
+
+    private boolean isEmailValid(String email) {
+        return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() >= 6;
+    }
+
+    private void showProgress(boolean show) {
+        edit_join_pw.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
 }
