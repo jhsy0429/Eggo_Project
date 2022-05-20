@@ -12,26 +12,33 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.eggo_project.RetrofitConnection.LoginData;
+import com.example.eggo_project.RetrofitConnection.LoginResponse;
+import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText edit_join_id, edit_join_pw;
+    private TextInputEditText edit_id, edit_pw;
     private Button btn_login, btn_join, btn_find;
     private AlertDialog dialog;
+    private RetrofitAPI retrofitAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        edit_join_id = findViewById(R.id.edit_join_id);
-        edit_join_pw = findViewById(R.id.edit_join_pw);
+        edit_id = findViewById(R.id.edit_id);
+        edit_pw = findViewById(R.id.edit_join_pw);
         btn_login = (Button)findViewById(R.id.btn_login);
         btn_join = (Button)findViewById(R.id.btn_join);
         btn_find = (Button)findViewById(R.id.btn_find);
@@ -69,47 +76,59 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-//        btn_login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // EditText에 현재 입력되어 있는 값을 가져온다(get).
-//                String userID = edit_join_id.getText().toString();
-//                String userPassword = edit_join_pw.getText().toString();
-//
-//
-//                    Response.Listener<String> responseListener = new Response.Listener<String>() {
-//                        public void onResponse(String response) {
-//                            try {
-//                                JSONObject jsonObject = new JSONObject(response);
-//                                boolean success = jsonObject.getBoolean("success");  //php의 success
-//
-//                                if (success) { // 로그인에 성공한 경우
-//                                    String userID = jsonObject.getString("userID");
-//                                    String userPassword = jsonObject.getString("userPassword");
-//                                    String userName = jsonObject.getString("userName");
-//
-//                                    Toast.makeText(getApplicationContext(), String.format("%s님 환영합니다.", userName), Toast.LENGTH_SHORT).show();
-//                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//
-//                                    intent.putExtra("userID", userID);
-//                                    intent.putExtra("userPassword", userPassword);
-//                                    intent.putExtra("userName", userName);
-//
-//                                    startActivity(intent);
-//                                } else { // 로그인에 실패한 경우
-//                                    Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-//                                    return;
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    };
-//
-//                    LoginRequest loginRequest = new LoginRequest(userID, userPassword, responseListener);
-//                    RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-//                    queue.add(loginRequest);
-//                }
-//        });
+    }
+
+    private void attemptLogin() {
+        edit_id.setError(null);
+        edit_pw.setError(null);
+
+        String id = edit_id.getText().toString();
+        String password = edit_pw.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // 패스워드의 유효성 검사
+        if (password.isEmpty()) {
+            edit_pw.setError("비밀번호를 입력해주세요.");
+            focusView = edit_pw;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
+            edit_pw.setError("6자 이상의 비밀번호를 입력해주세요.");
+            focusView = edit_pw;
+            cancel = true;
+        }
+
+        // 아이디의 유효성 검사
+        if (id.isEmpty()) {
+            edit_id.setError("아이디를 입력해주세요.");
+            focusView = edit_id;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            startLogin(new LoginData(id, password));
+        }
+    }
+
+    private void startLogin(LoginData loginData) {
+
+        retrofitAPI.SignIn(loginData).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() >= 6;
     }
 }
