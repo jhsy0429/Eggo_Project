@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+
+import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
@@ -27,10 +27,11 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText edit_id, edit_pw;
+    private TextInputEditText edit_id, edit_pwd;
     private Button btn_login, btn_join, btn_find;
     private AlertDialog dialog;
     private RetrofitAPI retrofitAPI;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         edit_id = findViewById(R.id.edit_id);
-        edit_pw = findViewById(R.id.edit_join_pw);
+        edit_pwd = findViewById(R.id.edit_pwd);
         btn_login = (Button)findViewById(R.id.btn_login);
         btn_join = (Button)findViewById(R.id.btn_join);
         btn_find = (Button)findViewById(R.id.btn_find);
@@ -66,12 +67,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // 알 수 없는... 이것의..오류....
-//                String userID = edit_join_id.getText().toString();
-//                String userPassword = edit_join_pw.getText().toString();
+                Toast.makeText(LoginActivity.this, "로그인버튼", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(intent);
+                attemptLogin();
+
             }
         });
 
@@ -80,22 +79,22 @@ public class LoginActivity extends AppCompatActivity {
 
     private void attemptLogin() {
         edit_id.setError(null);
-        edit_pw.setError(null);
+        edit_pwd.setError(null);
 
         String id = edit_id.getText().toString();
-        String password = edit_pw.getText().toString();
+        String password = edit_pwd.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // 패스워드의 유효성 검사
         if (password.isEmpty()) {
-            edit_pw.setError("비밀번호를 입력해주세요.");
-            focusView = edit_pw;
+            edit_pwd.setError("비밀번호를 입력해주세요.");
+            focusView = edit_pwd;
             cancel = true;
         } else if (!isPasswordValid(password)) {
-            edit_pw.setError("6자 이상의 비밀번호를 입력해주세요.");
-            focusView = edit_pw;
+            edit_pwd.setError("6자 이상의 비밀번호를 입력해주세요.");
+            focusView = edit_pwd;
             cancel = true;
         }
 
@@ -109,24 +108,27 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
-            startLogin(new LoginData(id, password));
+
+            Toast.makeText(LoginActivity.this, "가능", Toast.LENGTH_SHORT).show();
+
+            retrofitAPI.SignIn(id,"123","123", password).enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                    LoginResponse result = response.body();
+
+                    Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+                }
+            });
         }
     }
 
-    private void startLogin(LoginData loginData) {
-
-        retrofitAPI.SignIn(loginData).enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-
-            }
-        });
-    }
 
     private boolean isPasswordValid(String password) {
         return password.length() >= 6;

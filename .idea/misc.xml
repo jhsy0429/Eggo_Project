@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_detail.xml" value="0.1" />
+        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_join.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_login.xml" value="0.2006340579710145" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/fragment_all.xml" value="0.1125" />
       </map>

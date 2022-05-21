@@ -36,8 +36,14 @@ public interface RetrofitAPI {
             );
 
     // 로그인
+    @FormUrlEncoded
     @POST("/main/login")
-    Call<LoginResponse> SignIn(@Body LoginData loginData);
+    Call<LoginResponse> SignIn(
+            @Field("UserId") String userId,
+            @Field("Name") String name,
+            @Field("Email") String email,
+            @Field("Password") String password
+            );
 
 //    // 로그인
 //    @POST("/main/login")

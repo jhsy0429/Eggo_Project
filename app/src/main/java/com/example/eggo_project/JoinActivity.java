@@ -17,7 +17,6 @@ import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.example.eggo_project.RetrofitConnection.UserCheck;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,12 +68,6 @@ public class JoinActivity extends AppCompatActivity {
                                 dialog.show();
                                 validate = false;
                             }
-                            else {
-                                dialog = builder.setMessage(result.getResult()).setPositiveButton("확인",null).create();
-                                dialog.show();
-                                validate = false;
-                            }
-
                         }
                     }
 
@@ -181,8 +174,6 @@ public class JoinActivity extends AppCompatActivity {
                     Toast.makeText(JoinActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
                     startActivity(intent);
-
-
                 }
                 @Override
                 public void onFailure(Call<JoinResponse> call, Throwable t) {

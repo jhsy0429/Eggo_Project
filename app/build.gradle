@@ -37,8 +37,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation 'com.google.android.material:material:1.1.0'
-    implementation 'com.android.volley:volley:1.1.1'
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0' // 그래프 그리기
 
 
     // retrofit
@@ -48,5 +47,5 @@ dependencies {
 }
 
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven { url 'https://jitpack.io' } // 그래프 그리기
 }
