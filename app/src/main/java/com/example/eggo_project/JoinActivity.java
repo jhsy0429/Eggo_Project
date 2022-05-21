@@ -171,9 +171,16 @@ public class JoinActivity extends AppCompatActivity {
                 public void onResponse(Call<JoinResponse> call, Response<JoinResponse> response) {
                     JoinResponse result = response.body();
 
-                    Toast.makeText(JoinActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
+                    if (result.getResult().equals("success")) {
+                        Toast.makeText(JoinActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    else if (result.getResult().equals("fail")) {
+                        dialog = builder.setMessage(result.getMessage()).setPositiveButton("확인",null).create();
+                        dialog.show();
+                    }
                 }
                 @Override
                 public void onFailure(Call<JoinResponse> call, Throwable t) {

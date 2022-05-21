@@ -16,10 +16,13 @@ import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
+import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.logging.LogRecord;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_join = (Button)findViewById(R.id.btn_join);
         btn_find = (Button)findViewById(R.id.btn_find);
 
+        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
 
         //btn_join Button의 Click이벤트(회원가입 페이지로 이동)
         btn_join.setOnClickListener(new View.OnClickListener() {
@@ -66,11 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Toast.makeText(LoginActivity.this, "로그인버튼", Toast.LENGTH_SHORT).show();
-
                 attemptLogin();
-
             }
         });
 
@@ -109,16 +109,24 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
 
-            Toast.makeText(LoginActivity.this, "가능", Toast.LENGTH_SHORT).show();
 
             retrofitAPI.SignIn(id,"123","123", password).enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     LoginResponse result = response.body();
 
-                    Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                    if (result.getResult().equals("success")) {
+                        result.setName(result.getName());
+                        result.setEmail(result.getEmail());
+
+                        Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                    }
+                    else if (result.getResult().equals("fail")) {
+                        Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 @Override

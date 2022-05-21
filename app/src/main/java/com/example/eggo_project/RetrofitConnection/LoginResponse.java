@@ -9,6 +9,12 @@ public class LoginResponse {
     @SerializedName("message")
     private String message;
 
+    @SerializedName("name")
+    private String name;
+
+    @SerializedName("email")
+    private String email;
+
     public String getResult() {
         return result;
     }
@@ -16,4 +22,21 @@ public class LoginResponse {
     public String getMessage() {
         return message;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 }
