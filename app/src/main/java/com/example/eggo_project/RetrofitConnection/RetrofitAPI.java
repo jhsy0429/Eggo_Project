@@ -53,7 +53,17 @@ public interface RetrofitAPI {
     @POST("/scanPhoto")
     Call<RegResponse> BillReg(@Part MultipartBody.Part billImg);
 
+    // 자세히보기
+    @GET("/bill/pieGraph")
+    Call<DetailResponse> DetailLook(@Query("userId") String userId);
 
+    // 좌표값 보내주기
+
+    // 고지서 조회하기
+    @GET("/bill/getData")
+    Call<RegResponse> BillIn(
+            @Query("userId") String userId,
+            @Query("date") String date);
 }
 
 

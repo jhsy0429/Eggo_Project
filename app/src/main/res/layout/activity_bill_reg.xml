@@ -95,48 +95,54 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/electFee"
                     android:text=" "
-                    android:textSize="15dp"
-                    />
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/waterFee"
                     android:text=" "
                     android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/publicFee"
                     android:text=" "
                     android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/electUse"
                     android:text=" "
                     android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/waterUse"
                     android:text=" "
                     android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
-                <TextView
+                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/totalFee"
                     android:text=" "
                     android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
 
             </LinearLayout>

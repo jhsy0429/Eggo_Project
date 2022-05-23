@@ -2,7 +2,9 @@ package com.example.eggo_project.RetrofitConnection;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LoginData {
+import java.io.Serializable;
+
+public class LoginData implements Serializable {
     @SerializedName("UserId") private String userId;
     @SerializedName("Password") private String password;
 

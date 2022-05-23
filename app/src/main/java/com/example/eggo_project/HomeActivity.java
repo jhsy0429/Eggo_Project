@@ -28,9 +28,18 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.eggo_project.RetrofitConnection.DetailResponse;
+import com.example.eggo_project.RetrofitConnection.JoinResponse;
+import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
+import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
+import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class HomeActivity extends AppCompatActivity  {
@@ -50,6 +59,8 @@ public class HomeActivity extends AppCompatActivity  {
     private String userName;
     private String userEmail;
 
+    private RetrofitAPI retrofitAPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +70,9 @@ public class HomeActivity extends AppCompatActivity  {
         LoginResponse loginResponse = (LoginResponse) getIntent().getSerializableExtra("user");
         userName = loginResponse.getName();
         userEmail = loginResponse.getEmail();
+
+        LoginData loginData = (LoginData) getIntent().getSerializableExtra("id");
+        String id = loginData.getUserId();
 
         text_name = findViewById(R.id.text_name);
         text_name.setText(userName);
@@ -136,7 +150,9 @@ public class HomeActivity extends AppCompatActivity  {
                 }
                 // 고지서 조회
                 if (id == R.id.menu_bill_in) {
-                    startActivity(new Intent(HomeActivity.this, InquiryActivity.class));
+                    Intent intent = new Intent(HomeActivity.this, InquiryActivity.class);
+                    intent.putExtra("id", loginData);
+                    startActivity(intent);
                 }
                 // 고지서 예측
                 if (id == R.id.menu_bill_pre) {
@@ -173,8 +189,40 @@ public class HomeActivity extends AppCompatActivity  {
         btn_look.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,DetailActivity.class);
-                startActivity(intent);
+
+                retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+                retrofitAPI.DetailLook(id).enqueue(new Callback<DetailResponse>() {
+                    @Override
+                    public void onResponse(Call<DetailResponse> call, Response<DetailResponse> response) {
+                        DetailResponse result = response.body();
+
+                        if (result.getResult().equals("success")){
+                            String electFee = result.getElectricityFee();
+                            String waterFee = result.getWaterFee();
+                            String publicFee = result.getPublicFee();
+                            String individualFee = result.getIndividualFee();
+
+                            DetailResponse detailResponse = new DetailResponse();
+                            detailResponse.setElectricityFee(electFee);
+                            detailResponse.setWaterFee(waterFee);
+                            detailResponse.setPublicFee(publicFee);
+                            detailResponse.setIndividualFee(individualFee);
+
+                            Intent intent = new Intent(HomeActivity.this,DetailActivity.class);
+                            intent.putExtra("detail", detailResponse);
+                            startActivity(intent);
+                        }
+                        else if(result.getResult().equals("fail")) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DetailResponse> call, Throwable t) {
+
+                    }
+                });
+
             }
         });
 
@@ -194,6 +242,7 @@ public class HomeActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this,InquiryActivity.class);
+                intent.putExtra("id", loginData);
                 startActivity(intent);
             }
         });

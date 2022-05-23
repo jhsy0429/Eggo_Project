@@ -19,6 +19,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
+                android:hint="2022"
+                android:gravity="center|bottom"
+                android:textSize="25dp"
                 android:id="@+id/text_year"
                 />
 
@@ -39,6 +42,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
+                android:hint="05"
+                android:gravity="center|bottom"
+                android:textSize="25dp"
                 android:id="@+id/text_month"
                 />
 
@@ -69,6 +75,48 @@
         android:layout_marginTop="30dp"
         android:background="@drawable/border_line">
 
+        <TextView
+            android:id="@+id/in_electUse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전기사용량 : "
+            android:layout_marginTop="10dp"
+            android:textSize="30dp"/>
+        <TextView
+            android:id="@+id/in_waterUse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="수도사용량 : "
+            android:layout_marginTop="10dp"
+            android:textSize="30dp"/>
+        <TextView
+            android:id="@+id/in_electFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전기요금 : "
+            android:layout_marginTop="10dp"
+            android:textSize="30dp"/>
+        <TextView
+            android:id="@+id/in_waterFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="수도요금 : "
+            android:layout_marginTop="10dp"
+            android:textSize="30dp"/>
+        <TextView
+            android:id="@+id/in_publicFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="공공요금 : "
+            android:layout_marginTop="10dp"
+            android:textSize="30dp"/>
+        <TextView
+            android:id="@+id/in_totalFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="총 요금 : "
+            android:layout_marginTop="30dp"
+            android:textSize="30dp"/>
 
     </LinearLayout>
 

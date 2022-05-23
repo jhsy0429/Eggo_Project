@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.eggo_project.RetrofitConnection.DetailResponse;
+import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -24,6 +26,14 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        // 객체에서 응답데이터 받아오기
+        DetailResponse detailResponse = (DetailResponse) getIntent().getSerializableExtra("detail");
+
+        String electFee = detailResponse.getElectricityFee();
+        String waterFee = detailResponse.getWaterFee();
+        String publicFee = detailResponse.getPublicFee();
+        String individualFee = detailResponse.getIndividualFee();
+
         pieChart = (PieChart)findViewById(R.id.piechart);
 
         pieChart.setUsePercentValues(true);
@@ -40,19 +50,19 @@ public class DetailActivity extends AppCompatActivity {
 
 
         // 전기, 수도, 공공, 개별(전체 - 전기,수도,공공)
-        yValues.add(new PieEntry(34f,"전기요금"));
-        yValues.add(new PieEntry(23f,"수도요금"));
-        yValues.add(new PieEntry(14f,"공공요금"));
-        yValues.add(new PieEntry(35f,"개별요금"));
+        yValues.add(new PieEntry(Integer.parseInt(electFee),"전기요금:"+electFee));
+        yValues.add(new PieEntry(Integer.parseInt(waterFee),"수도요금:"+waterFee));
+        yValues.add(new PieEntry(Integer.parseInt(publicFee),"공공요금:"+publicFee));
+        yValues.add(new PieEntry(Integer.parseInt(individualFee),"개별요금:"+individualFee));
 
         Description description = new Description();
-        description.setText("총요금 자세히보기"); //라벨
+        description.setText("총요금 한눈에 비교하기"); //라벨
         description.setTextSize(15);
         pieChart.setDescription(description);
 
         pieChart.animateY(1000, Easing.EaseInOutCubic); //애니메이션
 
-        PieDataSet dataSet = new PieDataSet(yValues,"요금");
+        PieDataSet dataSet = new PieDataSet(yValues,"");
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
