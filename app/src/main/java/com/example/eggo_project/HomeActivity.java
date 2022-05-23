@@ -28,6 +28,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -35,6 +36,7 @@ import com.google.android.material.tabs.TabLayout;
 public class HomeActivity extends AppCompatActivity  {
 
     private Button btn_look, btn_bill_reg, btn_bill_in, btn_bill_pre, btn_eggo_ai, btn_energy_save;
+    private TextView text_name;
 
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -45,10 +47,21 @@ public class HomeActivity extends AppCompatActivity  {
     private ElectFragment fragment_elect;
     private WaterFragment fragment_water;
 
+    private String userName;
+    private String userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // 로그인 응답으로 가져온 회원 이름, 이메일
+        LoginResponse loginResponse = (LoginResponse) getIntent().getSerializableExtra("user");
+        userName = loginResponse.getName();
+        userEmail = loginResponse.getEmail();
+
+        text_name = findViewById(R.id.text_name);
+        text_name.setText(userName);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -99,8 +112,8 @@ public class HomeActivity extends AppCompatActivity  {
         // 네비게이션 헤더에 현재 로그인 중인 사용자를 보여주기 위해 데이터를 가져오는 코드
         // tv_username.setText(tempName + "님");
         // tv_useremail.setText(tempEmail);
-        tv_username.setText("한세린" + "님");
-        tv_useremail.setText("test12345@naver.com");
+        tv_username.setText(userName + "님");
+        tv_useremail.setText(userEmail);
 
         // navigation_container에 만든 요소들을 담음
         navigation_container.addView(tv_username);

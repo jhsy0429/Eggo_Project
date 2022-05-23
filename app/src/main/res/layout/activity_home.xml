@@ -71,6 +71,7 @@
                             android:layout_gravity="left"
                             android:layout_marginLeft="40dp"
                             android:text="한세린"
+                            android:id="@+id/text_name"
                             android:textSize="25dp" />
 
                         <TextView

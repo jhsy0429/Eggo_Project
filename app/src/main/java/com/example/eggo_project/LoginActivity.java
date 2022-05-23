@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import java.io.Serializable;
 
 import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.LoginData;
@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         edit_pwd = findViewById(R.id.edit_pwd);
         btn_login = (Button)findViewById(R.id.btn_login);
         btn_join = (Button)findViewById(R.id.btn_join);
-        btn_find = (Button)findViewById(R.id.btn_find);
 
         retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
 
@@ -58,15 +57,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //btn_find Button의 Click이벤트(ID/비밀번호 찾기 페이지로 이동)
-        btn_find.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this,FindActivity.class);
-                startActivity(intent);
-            }
-        });
 
+        // 로그인 시도
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // 로그인 데이터 유효성 검사
     private void attemptLogin() {
         edit_id.setError(null);
         edit_pwd.setError(null);
@@ -109,19 +102,23 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
 
-
             retrofitAPI.SignIn(id,"123","123", password).enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     LoginResponse result = response.body();
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                     if (result.getResult().equals("success")) {
-                        result.setName(result.getName());
-                        result.setEmail(result.getEmail());
+                        String name = result.getName();
+                        String email = result.getEmail();
+
+                        LoginResponse loginResponse = new LoginResponse();
+                        loginResponse.setName(name);
+                        loginResponse.setEmail(email);
+
 
                         Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        intent.putExtra("user", loginResponse);
                         startActivity(intent);
                     }
                     else if (result.getResult().equals("fail")) {

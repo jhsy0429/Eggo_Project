@@ -38,21 +38,21 @@ public class DetailActivity extends AppCompatActivity {
 
         ArrayList yValues = new ArrayList();
 
-        yValues.add(new PieEntry(34f,"Japen"));
-        yValues.add(new PieEntry(23f,"USA"));
-        yValues.add(new PieEntry(14f,"UK"));
-        yValues.add(new PieEntry(35f,"India"));
-        yValues.add(new PieEntry(40f,"Russia"));
-        yValues.add(new PieEntry(40f,"Korea"));
+
+        // 전기, 수도, 공공, 개별(전체 - 전기,수도,공공)
+        yValues.add(new PieEntry(34f,"전기요금"));
+        yValues.add(new PieEntry(23f,"수도요금"));
+        yValues.add(new PieEntry(14f,"공공요금"));
+        yValues.add(new PieEntry(35f,"개별요금"));
 
         Description description = new Description();
-        description.setText("세계 국가"); //라벨
+        description.setText("총요금 자세히보기"); //라벨
         description.setTextSize(15);
         pieChart.setDescription(description);
 
         pieChart.animateY(1000, Easing.EaseInOutCubic); //애니메이션
 
-        PieDataSet dataSet = new PieDataSet(yValues,"Countries");
+        PieDataSet dataSet = new PieDataSet(yValues,"요금");
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS);

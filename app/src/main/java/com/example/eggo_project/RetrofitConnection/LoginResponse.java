@@ -1,8 +1,9 @@
 package com.example.eggo_project.RetrofitConnection;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
-public class LoginResponse {
+public class LoginResponse implements Serializable {
     @SerializedName("result")
     private String result;
 
@@ -14,6 +15,7 @@ public class LoginResponse {
 
     @SerializedName("email")
     private String email;
+
 
     public String getResult() {
         return result;
