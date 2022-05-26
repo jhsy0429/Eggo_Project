@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,9 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RegResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
@@ -44,12 +48,16 @@ import retrofit2.http.Multipart;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    Button btn_camera, btn_photo, btn_reg;
+    Button btn_camera, btn_photo, btn_reg, btn_send;
 
     ImageView imageView;
     final private static String TAG = "RegistrationActivity";
     final static int TAKE_PICTURE = 1;
     private RetrofitAPI retrofitAPI;
+    private RegResponse regResponse;
+    private String mediaPath;
+
+    private static final int REQUEST_CODE = 0; // 사진 요청 코드
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +68,6 @@ public class RegistrationActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
         //btn_camera.setOnClickListener(this);
 
-        btn_photo = (Button) findViewById(R.id.btn_photo);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
@@ -82,6 +89,27 @@ public class RegistrationActivity extends AppCompatActivity {
                         startActivityForResult(cameraIntent, TAKE_PICTURE);
                         break;
                 }
+            }
+        });
+
+        btn_photo = (Button) findViewById(R.id.btn_photo);
+        // 갤러리에서 사진가져오기
+        btn_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
+        btn_send = (Button) findViewById(R.id.btn_send);
+        // 사진 전송하기
+        btn_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goImage();
             }
         });
     }
@@ -145,6 +173,28 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 }
                 break;
+        }
+
+        // 갤러리에서 사진호출 후 통신
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    Uri uri = intent.getData();
+                    Glide.with(getApplicationContext()).load(uri).into(imageView); // 이미지뷰띄우기
+
+                    //커서 사용해서 경로 확인
+                    Cursor cursor = getContentResolver().query(Uri.parse(uri.toString()), null, null, null, null);
+                    assert cursor != null;
+                    cursor.moveToFirst();
+                    mediaPath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                    System.out.println(mediaPath);
+
+                } catch (Exception e) {
+
+                }
+            } else if (resultCode == RESULT_CANCELED) {
+                    return;
+            }
         }
 
     }
@@ -223,6 +273,41 @@ public class RegistrationActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    public void goImage(){
+        File file = new File(mediaPath);
+
+        // Uri 타입의 파일경로를 가지는 RequestBody 객체 생성
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), file);
+        // RequestBody로 Multipart.Part 객체 생성
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
+
+        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+        retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
+            @Override
+            public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
+                RegResponse result = response.body();
+
+                if(result.getResult().equals("success")){
+                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    RegResponse regResponse = new RegResponse();
+                }
+                else if (result.getResult().equals("fail")){
+                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            @Override
+            public void onFailure(Call<RegResponse> call, Throwable t) {
+
+            }
+        });
+
+        if(mediaPath != null) {
+
         }
     }
 

@@ -1,10 +1,8 @@
 package com.example.eggo_project.RetrofitConnection;
 
-
 import com.google.gson.annotations.SerializedName;
 
-public class UserDTO {
-    @SerializedName("userId") private String userId; // 아이디
+public class RegResponse {
     @SerializedName("date") private String date; // 날짜
     @SerializedName("electUse") private String electUse; // 전기사용량
     @SerializedName("waterUse") private String waterUse; // 수도사용량
@@ -13,9 +11,22 @@ public class UserDTO {
     @SerializedName("publicFee") private String publicFee; // 공공요금
     @SerializedName("totalFee") private String totalFee; // 총요금
 
-    public String getUserId() {
-        return userId;
+
+
+    @SerializedName("result")
+    private String result;
+
+    @SerializedName("message")
+    private String message;
+
+    public String getResult() {
+        return result;
     }
+    public String getMessage() {
+        return message;
+    }
+
+
     public String getDate() {
         return date;
     }
@@ -39,9 +50,6 @@ public class UserDTO {
     }
 
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
     public void setDate(String date) {
         this.date = date;
     }

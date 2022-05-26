@@ -58,6 +58,7 @@ public class HomeActivity extends AppCompatActivity  {
 
     private String userName;
     private String userEmail;
+    private String id;
 
     private RetrofitAPI retrofitAPI;
 
@@ -71,8 +72,9 @@ public class HomeActivity extends AppCompatActivity  {
         userName = loginResponse.getName();
         userEmail = loginResponse.getEmail();
 
+        // intent에 저장된 id
         LoginData loginData = (LoginData) getIntent().getSerializableExtra("id");
-        String id = loginData.getUserId();
+        id = loginData.getUserId();
 
         text_name = findViewById(R.id.text_name);
         text_name.setText(userName);
@@ -281,8 +283,15 @@ public class HomeActivity extends AppCompatActivity  {
         // 프레그먼트 설정
 
         fragment_all = new AllFragment();
+        Bundle bundle = new Bundle(1); // 파라미터는 전달할 데이터 개수
+        bundle.putString("userId", id); // key , value
+        fragment_all.setArguments(bundle);
+
         fragment_elect = new ElectFragment();
+        fragment_elect.setArguments(bundle);
+
         fragment_water = new WaterFragment();
+        fragment_water.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction().add(R.id.container, fragment_all).commit();
 

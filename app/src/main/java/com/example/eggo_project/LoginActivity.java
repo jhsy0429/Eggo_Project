@@ -15,16 +15,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.Serializable;
 
+import com.example.eggo_project.RetrofitConnection.DataListResponse;
 import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
+import com.example.eggo_project.RetrofitConnection.UserDTO;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.LogRecord;
 
 import retrofit2.Call;
@@ -37,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btn_login, btn_join, btn_find;
     private AlertDialog dialog;
     private RetrofitAPI retrofitAPI;
+    private List<UserDTO> userDto;
 
 
     @Override
@@ -119,8 +124,11 @@ public class LoginActivity extends AppCompatActivity {
                         loginResponse.setEmail(email);
 
                         LoginData loginData = new LoginData(id, password);
-                        String id = loginData.getUserId();
-                        loginData.setUserId(id);
+                        String userid = loginData.getUserId();
+                        loginData.setUserId(userid);
+
+//                        // 그래프를 위한 데이터 조회
+//                        getDataList(id);
 
                         Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
@@ -145,6 +153,28 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
+
+//    public void getDataList(String userId){
+//        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+//
+//        retrofitAPI.BillDataList(userId).enqueue(new Callback<DataListResponse>() {
+//            @Override
+//            public void onResponse(Call<DataListResponse> call, Response<DataListResponse> response) {
+//                DataListResponse result = response.body();
+//                userDto = new ArrayList<>();
+//
+//                if (result.getResult().equals("success")) {
+//                    userDto = result.getDataList();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<DataListResponse> call, Throwable t) {
+//
+//            }
+//        });
+//    }
+
 
     // 터치로 화면 내리기
     public boolean dispatchTouchEvent(MotionEvent ev) {
