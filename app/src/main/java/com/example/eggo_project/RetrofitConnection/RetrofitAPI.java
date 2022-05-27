@@ -48,6 +48,20 @@ public interface RetrofitAPI {
             @Field("Password") String password
             );
 
+    // 고지서 등록
+    @FormUrlEncoded
+    @POST("/bill/register")
+    Call<UserCheck> Register(
+            @Field("UserId") String userId,
+            @Field("date") String date,
+            @Field("electUse") String electUse,
+            @Field("waterUse") String waterUse,
+            @Field("electFee") String electFee,
+            @Field("waterFee") String waterFee,
+            @Field("publicFee") String publicFee,
+            @Field("totalFee") String totalFee
+            );
+
     // 이미지 전송
     @Multipart
     @POST("/scanPhoto")
@@ -66,6 +80,13 @@ public interface RetrofitAPI {
     Call<RegResponse> BillIn(
             @Query("userId") String userId,
             @Query("date") String date);
+
+    // 실시간 요금 검색(1시간)
+    @GET("/realTimeData")
+    Call<RealTimeResponse> RealTimeData(
+            @Query("region1") String region1,
+            @Query("region2") String region2,
+            @Query("region3") String region3);
 }
 
 

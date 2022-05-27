@@ -16,7 +16,7 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="320dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -30,7 +30,7 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="280dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
@@ -38,6 +38,27 @@
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="날짜"
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="전기사용량"
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="수도사용량"
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -60,19 +81,6 @@
                     android:layout_marginTop="10dp"
                     android:textSize="20dp"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="전기사용량"
-                    android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="수도사용량"
-                    android:layout_marginTop="10dp"
-                    android:textSize="20dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -88,6 +96,33 @@
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_date"
+                    android:text=" "
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/electUse"
+                    android:text=" "
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/waterUse"
+                    android:text=" "
+                    android:layout_marginTop="10dp"
+                    android:textSize="20dp"
+                    android:background="@android:color/transparent" />
 
 
                 <EditText
@@ -120,24 +155,6 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/electUse"
-                    android:text=" "
-                    android:layout_marginTop="10dp"
-                    android:textSize="20dp"
-                    android:background="@android:color/transparent" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/waterUse"
-                    android:text=" "
-                    android:layout_marginTop="10dp"
-                    android:textSize="20dp"
-                    android:background="@android:color/transparent" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/totalFee"
                     android:text=" "
                     android:layout_marginTop="10dp"
@@ -158,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="100dp"
+                    android:layout_marginTop="130dp"
                     android:text="전송"
                     android:textStyle="bold" />
 

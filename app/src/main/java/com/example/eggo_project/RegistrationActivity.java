@@ -1,6 +1,7 @@
 package com.example.eggo_project;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,10 +28,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RegResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
+import com.example.eggo_project.RetrofitConnection.UserCheck;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,6 +60,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private RetrofitAPI retrofitAPI;
     private RegResponse regResponse;
     private String mediaPath;
+    private EditText text_date, electUse, waterUse, electFee, waterFee, publicFee, totalFee;
+    private AlertDialog dialog;
 
     private static final int REQUEST_CODE = 0; // 사진 요청 코드
 
@@ -112,6 +118,70 @@ public class RegistrationActivity extends AppCompatActivity {
                 goImage();
             }
         });
+
+        // 고지서 등록하기
+        btn_reg = (Button) findViewById(R.id.btn_reg);
+
+        LoginData loginData = (LoginData) getIntent().getSerializableExtra("userId");
+        String userId = loginData.getUserId();
+
+        text_date = findViewById(R.id.text_date);
+        electUse = findViewById(R.id.electUse);
+        waterUse = findViewById(R.id.waterUse);
+        electFee = findViewById(R.id.electFee);
+        waterFee = findViewById(R.id.waterFee);
+        publicFee = findViewById(R.id.publicFee);
+        totalFee = findViewById(R.id.totalFee);
+
+        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+
+        btn_reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String date = text_date.getText().toString();
+                String elect_Use = electUse.getText().toString();
+                String water_Use = waterUse.getText().toString();
+                String elect_Fee = electFee.getText().toString();
+                String water_Fee = waterFee.getText().toString();
+                String public_Fee = publicFee.getText().toString();
+                String total_Fee = totalFee.getText().toString();
+
+                if (date.equals("") || elect_Use.equals("") || water_Use.equals("")
+                        || elect_Fee.equals("") || water_Fee.equals("")
+                        || public_Fee.equals("") || total_Fee.equals("")) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+                    dialog = builder.setMessage("빈칸을 모두 입력해주세요.").setPositiveButton("확인",null).create();
+                    dialog.show();
+
+                } else if (!(date.equals("") && elect_Use.equals("") && water_Use.equals("")
+                        && elect_Fee.equals("") && water_Fee.equals("")
+                        && public_Fee.equals("") && total_Fee.equals(""))){
+
+                    retrofitAPI.Register(userId, date, elect_Use, water_Use, elect_Fee, water_Fee, public_Fee, total_Fee).enqueue(new Callback<UserCheck>() {
+                        @Override
+                        public void onResponse(Call<UserCheck> call, Response<UserCheck> response) {
+                            UserCheck result = response.body();
+
+                            if (result.getResult().equals("success")) {
+                                Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            else if (result.getResult().equals("fail")) {
+                                Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserCheck> call, Throwable t) {
+
+                        }
+                    });
+
+                }
+            }
+        });
+
+
     }
 
     // 카메라 권한 요청

@@ -83,7 +83,8 @@ public class AllFragment extends Fragment {
 
                     chart = rootView.findViewById(R.id.all_linechart);
 
-                    dataSet = new LineDataSet(values, "total");
+                    dataSet = new LineDataSet(values, "Total Fee");
+                    dataSet.setColor(Color.rgb(255, 155, 155));
 
                     LineData data = new LineData();
                     data.addDataSet(dataSet);
@@ -95,8 +96,12 @@ public class AllFragment extends Fragment {
 
                     ChartCustom();
 
+                    MyMarkerView mv = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                    mv.setChartView(chart);
+                    chart.setMarker(mv);
+
                     chart.invalidate(); // 차트 업데이트
-                    chart.setTouchEnabled(false); // 차트 터치 disable
+                    chart.setTouchEnabled(true); // 차트 터치 disable
 
                 }
             }
@@ -123,7 +128,7 @@ public class AllFragment extends Fragment {
         legend.setDrawInside(false);
         legend.setYEntrySpace(5);
         legend.setWordWrapEnabled(true);
-        legend.setXOffset(80f);
+        legend.setXOffset(40f);
         legend.setYOffset(20f);
         legend.getCalculatedLineSizes();
 

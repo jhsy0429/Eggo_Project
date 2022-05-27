@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -63,6 +64,7 @@ public class WaterFragment extends Fragment {
                     userDto = result.getDataList();
 
                     values = new ArrayList<>();
+                    label = new ArrayList<String>();
 
                     for (int i = 0; i < 6; i++) {
 
@@ -76,12 +78,15 @@ public class WaterFragment extends Fragment {
                         }
 
                         values.add(new Entry(i, waterFee));
+                        label.add(month + "월");
+                        System.out.println(month+"월");
+
                     }
 
                     chart = rootView.findViewById(R.id.water_linechart);
 
-                    LineDataSet dataSet = new LineDataSet(values, "water");
-                    dataSet.setColor(Color.RED);
+                    dataSet = new LineDataSet(values, "Water Fee");
+                    dataSet.setColor(Color.rgb(166, 208, 227));
 
                     LineData data = new LineData();
                     data.addDataSet(dataSet);
@@ -93,8 +98,12 @@ public class WaterFragment extends Fragment {
 
                     ChartCustom();
 
+                    MyMarkerView mv = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                    mv.setChartView(chart);
+                    chart.setMarker(mv);
+
                     chart.invalidate(); // 차트 업데이트
-                    chart.setTouchEnabled(false); // 차트 터치 disable
+                    chart.setTouchEnabled(true); // 차트 터치 disable
                 }
             }
 
@@ -120,7 +129,7 @@ public class WaterFragment extends Fragment {
         legend.setDrawInside(false);
         legend.setYEntrySpace(5);
         legend.setWordWrapEnabled(true);
-        legend.setXOffset(80f);
+        legend.setXOffset(40f);
         legend.setYOffset(20f);
         legend.getCalculatedLineSizes();
 

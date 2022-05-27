@@ -154,28 +154,6 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() >= 6;
     }
 
-//    public void getDataList(String userId){
-//        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
-//
-//        retrofitAPI.BillDataList(userId).enqueue(new Callback<DataListResponse>() {
-//            @Override
-//            public void onResponse(Call<DataListResponse> call, Response<DataListResponse> response) {
-//                DataListResponse result = response.body();
-//                userDto = new ArrayList<>();
-//
-//                if (result.getResult().equals("success")) {
-//                    userDto = result.getDataList();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<DataListResponse> call, Throwable t) {
-//
-//            }
-//        });
-//    }
-
-
     // 터치로 화면 내리기
     public boolean dispatchTouchEvent(MotionEvent ev) {
         View view = getCurrentFocus();

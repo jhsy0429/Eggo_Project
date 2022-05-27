@@ -63,6 +63,7 @@ public class ElectFragment extends Fragment {
                     userDto = result.getDataList();
 
                     values = new ArrayList<>();
+                    label = new ArrayList<String>();
 
                     for (int i = 0; i < 6; i++) {
 
@@ -76,11 +77,14 @@ public class ElectFragment extends Fragment {
                         }
 
                         values.add(new Entry(i, electFee));
+                        label.add(month + "월");
+                        System.out.println(month+"월");
                     }
 
                     chart = rootView.findViewById(R.id.elect_linechart);
 
-                    LineDataSet dataSet = new LineDataSet(values, "electricity");
+                    dataSet = new LineDataSet(values, "Electricity Fee");
+                    dataSet.setColor(Color.rgb(178, 223, 138));
 
                     LineData data = new LineData();
                     data.addDataSet(dataSet);
@@ -92,8 +96,12 @@ public class ElectFragment extends Fragment {
 
                     ChartCustom();
 
+                    MyMarkerView mv = new MyMarkerView(getContext(), R.layout.custom_marker_view);
+                    mv.setChartView(chart);
+                    chart.setMarker(mv);
+
                     chart.invalidate(); // 차트 업데이트
-                    chart.setTouchEnabled(false); // 차트 터치 disable
+                    chart.setTouchEnabled(true); // 차트 터치 disable
 
                 }
             }
@@ -121,7 +129,7 @@ public class ElectFragment extends Fragment {
         legend.setDrawInside(false);
         legend.setYEntrySpace(5);
         legend.setWordWrapEnabled(true);
-        legend.setXOffset(80f);
+        legend.setXOffset(30f);
         legend.setYOffset(20f);
         legend.getCalculatedLineSizes();
 

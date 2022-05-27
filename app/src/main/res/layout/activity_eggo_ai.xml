@@ -2,42 +2,152 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_weight="1">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_fid"
-            android:layout_width="150dp"
-            android:layout_height="200dp"
-            android:textStyle="bold"
-            android:text="ID 찾기"
-            android:textSize="20dp"
-            android:layout_gravity="center"/>
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="시 :"
+                    android:textSize="30dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorWhite"
+                        android:gravity="center|bottom"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="20dp"
+                        android:id="@+id/text_si"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="구 :"
+                    android:textSize="30dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorWhite"
+                        android:gravity="center|bottom"
+                        android:textSize="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/text_gu"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="동 :"
+                    android:textSize="30dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorWhite"
+                        android:gravity="center|bottom"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="20dp"
+                        android:id="@+id/text_dong"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_search"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="검색"
+                android:layout_marginTop="160dp"
+                android:layout_marginLeft="80dp"
+                android:layout_gravity="bottom"
+                />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
+
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center"
-        android:layout_weight="1">
+        android:layout_marginTop="30dp"
+        android:background="@drawable/border_line">
 
-        <Button
-            android:id="@+id/btn_fpw"
-            android:layout_width="150dp"
-            android:layout_height="200dp"
-            android:textStyle="bold"
-            android:text="PW 찾기"
-            android:textSize="20dp"
-            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/text_pre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="검색한 주소의 현재 날씨를 조회해 실시간으로 전기 요금에 대해 예측."
+            android:layout_marginTop="10dp"
+            android:textSize="30dp"/>
+
 
     </LinearLayout>
+
 
 </LinearLayout>
