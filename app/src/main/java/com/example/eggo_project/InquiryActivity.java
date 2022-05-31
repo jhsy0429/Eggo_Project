@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,9 +27,13 @@ public class InquiryActivity extends AppCompatActivity {
 
     private TextInputEditText text_year, text_month;
     private TextView electFee, waterFee, publicFee, electUse, waterUse, totalFee;
-    private Button btn_inquiry;
+    private EditText edit_electUse, edit_waterUse, edit_electFee, edit_waterFee, edit_publicFee, edit_totalFee;
+    private String id, date, elect_Fee, water_Fee, public_Fee, elect_Use, water_Use, total_Fee;
+    private Button btn_inquiry, btn_modify, btn_success;
     private RetrofitAPI retrofitAPI;
     private AlertDialog dialog;
+    private boolean change = false; // 조희 -> 수정
+    private boolean update = false; // 수정 -> 완료
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,7 @@ public class InquiryActivity extends AppCompatActivity {
         totalFee = (TextView)findViewById(R.id.in_totalFee);
 
         LoginData loginData = (LoginData) getIntent().getSerializableExtra("id");
-        String id = loginData.getUserId();
+        id = loginData.getUserId();
 
         retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
 
@@ -58,7 +64,8 @@ public class InquiryActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final String year = text_year.getText().toString();
                 final String month = text_month.getText().toString();
-                String date = year + month;
+                date = year + month;
+                change = true;
 
                 if(year.equals("")||month.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(InquiryActivity.this);
@@ -73,19 +80,19 @@ public class InquiryActivity extends AppCompatActivity {
                             RegResponse result = response.body();
 
                             if (result.getResult().equals("success")) {
-                                String elect_Fee = result.getElectricityFee();
-                                String water_Fee = result.getWaterFee();
-                                String public_Fee = result.getPublicFee();
-                                String elect_Use = result.getElectricityUsage();
-                                String water_Use = result.getWaterUsage();
-                                String total_Fee = result.getTotalFee();
+                                elect_Fee = result.getElectricityFee();
+                                water_Fee = result.getWaterFee();
+                                public_Fee = result.getPublicFee();
+                                elect_Use = result.getElectricityUsage();
+                                water_Use = result.getWaterUsage();
+                                total_Fee = result.getTotalFee();
 
-                                electUse.setText("전기사용량 : " + elect_Use);
-                                waterUse.setText("수도사용량 : " + water_Use);
-                                electFee.setText("전기요금 : " + elect_Fee);
-                                waterFee.setText("수도요금 : " + water_Fee);
-                                publicFee.setText("공공요금 : " + public_Fee);
-                                totalFee.setText("총요금 : " + total_Fee);
+                                electUse.setText(elect_Use);
+                                waterUse.setText(water_Use);
+                                electFee.setText(elect_Fee);
+                                waterFee.setText(water_Fee);
+                                publicFee.setText(public_Fee);
+                                totalFee.setText(total_Fee);
 
                             }
                             else if (result.getResult().equals("fail")) {
@@ -102,6 +109,119 @@ public class InquiryActivity extends AppCompatActivity {
             }
         });
 
+        edit_electUse = findViewById(R.id.edit_electUse);
+        edit_waterUse = findViewById(R.id.edit_waterUse);
+        edit_electFee = findViewById(R.id.edit_electFee);
+        edit_waterFee = findViewById(R.id.edit_waterFee);
+        edit_publicFee = findViewById(R.id.edit_publicFee);
+        edit_totalFee = findViewById(R.id.edit_totalFee);
 
+        btn_modify = (Button) findViewById(R.id.btn_modify);
+        btn_success = (Button) findViewById(R.id.btn_success);
+
+        // 고지서 수정하기
+        btn_modify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (change) {
+                    electUse.setVisibility(View.GONE);
+                    waterUse.setVisibility(View.GONE);
+                    electFee.setVisibility(View.GONE);
+                    waterFee.setVisibility(View.GONE);
+                    publicFee.setVisibility(View.GONE);
+                    totalFee.setVisibility(View.GONE);
+
+                    edit_electUse.setVisibility(View.VISIBLE);
+                    edit_waterUse.setVisibility(View.VISIBLE);
+                    edit_electFee.setVisibility(View.VISIBLE);
+                    edit_waterFee.setVisibility(View.VISIBLE);
+                    edit_publicFee.setVisibility(View.VISIBLE);
+                    edit_totalFee.setVisibility(View.VISIBLE);
+
+                    edit_electUse.setText(elect_Use);
+                    edit_waterUse.setText(water_Use);
+                    edit_electFee.setText(elect_Fee);
+                    edit_waterFee.setText(water_Fee);
+                    edit_publicFee.setText(public_Fee);
+                    edit_totalFee.setText(total_Fee);
+
+                    btn_success.setVisibility(View.VISIBLE);
+
+
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InquiryActivity.this);
+                    dialog = builder.setMessage("수정할 고지서를 조회해주세요.").setPositiveButton("확인",null).create();
+                    dialog.show();
+                }
+            }
+        });
+
+
+
+        btn_success.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                elect_Use = edit_electUse.getText().toString();
+                water_Use = edit_waterUse.getText().toString();
+                elect_Fee = edit_electFee.getText().toString();
+                water_Fee = edit_waterFee.getText().toString();
+                public_Fee = edit_publicFee.getText().toString();
+                total_Fee = edit_totalFee.getText().toString();
+
+                if (elect_Use.equals("") || water_Use.equals("")
+                        || elect_Fee.equals("") || water_Fee.equals("")
+                        || public_Fee.equals("") || total_Fee.equals("")) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InquiryActivity.this);
+                    dialog = builder.setMessage("빈칸을 모두 입력해주세요.").setPositiveButton("확인",null).create();
+                    dialog.show();
+                } else {
+
+                    retrofitAPI.BillUpdate(id, date, elect_Use, water_Use, elect_Fee, water_Fee, public_Fee, total_Fee).enqueue(new Callback<RegResponse>() {
+                        @Override
+                        public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
+                            RegResponse result = response.body();
+
+                            if (result.getResult().equals("success")) {
+                                Toast.makeText(InquiryActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(InquiryActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<RegResponse> call, Throwable t) {
+
+                        }
+                    });
+
+
+                    edit_electUse.setVisibility(View.GONE);
+                    edit_waterUse.setVisibility(View.GONE);
+                    edit_electFee.setVisibility(View.GONE);
+                    edit_waterFee.setVisibility(View.GONE);
+                    edit_publicFee.setVisibility(View.GONE);
+                    edit_totalFee.setVisibility(View.GONE);
+
+                    electUse.setVisibility(View.VISIBLE);
+                    waterUse.setVisibility(View.VISIBLE);
+                    electFee.setVisibility(View.VISIBLE);
+                    waterFee.setVisibility(View.VISIBLE);
+                    publicFee.setVisibility(View.VISIBLE);
+                    totalFee.setVisibility(View.VISIBLE);
+
+                    electUse.setText(elect_Use);
+                    waterUse.setText(water_Use);
+                    electFee.setText(elect_Fee);
+                    waterFee.setText(water_Fee);
+                    publicFee.setText(public_Fee);
+                    totalFee.setText(total_Fee);
+
+                    btn_success.setVisibility(View.INVISIBLE);
+                }
+
+            }
+        });
     }
 }

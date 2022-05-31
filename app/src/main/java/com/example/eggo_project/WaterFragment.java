@@ -68,8 +68,8 @@ public class WaterFragment extends Fragment {
 
                     for (int i = 0; i < 6; i++) {
 
-                        int waterFee = Integer.parseInt(userDto.get(i).getWaterFee());
-                        int date = Integer.parseInt(userDto.get(i).getDate());
+                        int waterFee = Integer.parseInt(userDto.get(6-i-1).getWaterFee());
+                        int date = Integer.parseInt(userDto.get(6-i-1).getDate());
                         int month = 1;
                         if ( date > 202100 && date < 202200){
                             month = date - 202100;

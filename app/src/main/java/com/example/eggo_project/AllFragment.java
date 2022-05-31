@@ -67,8 +67,8 @@ public class AllFragment extends Fragment {
 
                     for (int i = 0; i < 6; i++) {
 
-                        int totalFee = Integer.parseInt(userDto.get(i).getTotalFee());
-                        int date = Integer.parseInt(userDto.get(i).getDate());
+                        int totalFee = Integer.parseInt(userDto.get(6-i-1).getTotalFee());
+                        int date = Integer.parseInt(userDto.get(6-i-1).getDate());
                         int month = 1;
                         if ( date > 202100 && date < 202200){
                             month = date - 202100;
@@ -78,7 +78,6 @@ public class AllFragment extends Fragment {
 
                         values.add(new Entry(i, totalFee));
                         label.add(month + "월");
-                        System.out.println(month+"월");
                     }
 
                     chart = rootView.findViewById(R.id.all_linechart);

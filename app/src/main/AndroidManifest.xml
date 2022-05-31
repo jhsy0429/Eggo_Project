@@ -36,10 +36,8 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".ModifyActivity" />
         <activity android:name=".RegistrationActivity" />
-        <activity android:name=".PredictionActivity" />
         <activity android:name=".InquiryActivity" />
         <activity android:name=".EggoaiActivity" />
-        <activity android:name=".EnergyActivity" />
         <activity android:name=".DetailActivity" />
 
         <meta-data

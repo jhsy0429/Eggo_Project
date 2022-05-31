@@ -67,8 +67,8 @@ public class ElectFragment extends Fragment {
 
                     for (int i = 0; i < 6; i++) {
 
-                        int electFee = Integer.parseInt(userDto.get(i).getElectricityFee());
-                        int date = Integer.parseInt(userDto.get(i).getDate());
+                        int electFee = Integer.parseInt(userDto.get(6-i-1).getElectricityFee());
+                        int date = Integer.parseInt(userDto.get(6-i-1).getDate());
                         int month = 1;
                         if ( date > 202100 && date < 202200){
                             month = date - 202100;

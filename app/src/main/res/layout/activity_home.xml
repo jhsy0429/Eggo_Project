@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/drawer"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity"
-    >
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="left"
-        app:menu="@menu/tab_menu" />
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,7 +83,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
                             android:layout_marginLeft="40dp"
-                            android:text="이번달 요금"
+                            android:text="저번달 요금"
                             android:textSize="20dp" />
 
                         <TextView
@@ -104,6 +92,7 @@
                             android:layout_gravity="left"
                             android:layout_marginLeft="50dp"
                             android:text="1000"
+                            android:id="@+id/text_fee"
                             android:textSize="25dp" />
 
                         <TextView
@@ -175,20 +164,31 @@
 
                         <Button
                             android:id="@+id/btn_bill_reg"
-                            android:layout_width="130dp"
-                            android:layout_height="150dp"
+                            android:layout_width="200dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
-                            android:text="고지서   등록"
+                            android:text="고지서 등록"
                             android:textSize="20dp"
                             android:textStyle="bold" />
 
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="40dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/btn_bill_in"
-                            android:layout_width="130dp"
-                            android:layout_height="150dp"
+                            android:layout_width="200dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="50dp"
-                            android:text="고지서   조회"
+                            android:text="고지서 조회/변경"
                             android:textSize="20dp"
                             android:textStyle="bold" />
 
@@ -202,46 +202,15 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <Button
-                            android:id="@+id/btn_bill_pre"
-                            android:layout_width="130dp"
-                            android:layout_height="150dp"
-                            android:layout_gravity="center"
-                            android:text="고지서   예측"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
 
                         <Button
                             android:id="@+id/btn_eggo_ai"
-                            android:layout_width="130dp"
-                            android:layout_height="150dp"
+                            android:layout_width="200dp"
+                            android:layout_height="80dp"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="50dp"
                             android:text="Eggo ai"
                             android:textSize="20dp"
                             android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="40dp"
-                        android:layout_marginBottom="100dp"
-                        android:layout_weight="1"
-                        android:gravity="left"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/btn_energy_save"
-                            android:layout_width="130dp"
-                            android:layout_height="150dp"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="30dp"
-                            android:text="에너지   절약법"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
-
 
                     </LinearLayout>
 
@@ -254,4 +223,4 @@
 
     </LinearLayout>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</LinearLayout>

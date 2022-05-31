@@ -28,14 +28,25 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.eggo_project.RetrofitConnection.DataListResponse;
 import com.example.eggo_project.RetrofitConnection.DetailResponse;
 import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
+import com.example.eggo_project.RetrofitConnection.RegResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
+import com.example.eggo_project.RetrofitConnection.UserDTO;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,8 +55,8 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity  {
 
-    private Button btn_look, btn_bill_reg, btn_bill_in, btn_bill_pre, btn_eggo_ai, btn_energy_save;
-    private TextView text_name;
+    private Button btn_look, btn_bill_reg, btn_bill_in, btn_eggo_ai;
+    private TextView text_name, text_fee;
 
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -59,6 +70,9 @@ public class HomeActivity extends AppCompatActivity  {
     private String userName;
     private String userEmail;
     private String id;
+    public static String format_yyyyMM = "yyyyMM";
+    private String date, lastMonth;
+    private List<UserDTO> userDto;
 
     private RetrofitAPI retrofitAPI;
 
@@ -78,6 +92,59 @@ public class HomeActivity extends AppCompatActivity  {
 
         text_name = findViewById(R.id.text_name);
         text_name.setText(userName);
+
+
+        // 현재 날짜 받아오기(년도,월)
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat format = new SimpleDateFormat(format_yyyyMM, Locale.getDefault());
+        String current = format.format(currentTime);
+
+
+        // 저번달 날짜 받기
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMM", Locale.KOREAN);
+            Calendar cal = Calendar.getInstance();
+            Date sMonth = sdf.parse(current);
+
+            cal.setTime(sMonth);
+            cal.add(Calendar.MONTH, -1);
+
+            lastMonth = sdf.format(cal.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // 저번달 요금 등록
+        text_fee = findViewById(R.id.text_fee);
+
+        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+        retrofitAPI.BillDataList(id).enqueue(new Callback<DataListResponse>() {
+            @Override
+            public void onResponse(Call<DataListResponse> call, Response<DataListResponse> response) {
+                DataListResponse result = response.body();
+                userDto = new ArrayList<>();
+
+                if (result.getResult().equals("success")) {
+                    userDto = result.getDataList();
+                    date = userDto.get(0).getDate();
+
+                    if (lastMonth.equals(date)){
+                        text_fee.setText(userDto.get(0).getTotalFee());
+                    } else {
+                        text_fee.setText("등록해주세요.");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DataListResponse> call, Throwable t) {
+
+            }
+        });
+
+
+
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -156,18 +223,12 @@ public class HomeActivity extends AppCompatActivity  {
                     intent.putExtra("id", loginData);
                     startActivity(intent);
                 }
-                // 고지서 예측
-                if (id == R.id.menu_bill_pre) {
-                    startActivity(new Intent(HomeActivity.this, PredictionActivity.class));
-                }
+
                 // Eggo AI
                 if (id == R.id.menu_eggo_ai) {
                     startActivity(new Intent(HomeActivity.this, EggoaiActivity.class));
                 }
-                // 에너지 절약법
-                if (id == R.id.menu_energy_save) {
-                    startActivity(new Intent(HomeActivity.this, EnergyActivity.class));
-                }
+
 
                 return true;
             }
@@ -192,38 +253,43 @@ public class HomeActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
 
-                retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
-                retrofitAPI.DetailLook(id).enqueue(new Callback<DetailResponse>() {
-                    @Override
-                    public void onResponse(Call<DetailResponse> call, Response<DetailResponse> response) {
-                        DetailResponse result = response.body();
+                if (lastMonth.equals(date)) {
+                    retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+                    retrofitAPI.DetailLook(id).enqueue(new Callback<DetailResponse>() {
+                        @Override
+                        public void onResponse(Call<DetailResponse> call, Response<DetailResponse> response) {
+                            DetailResponse result = response.body();
 
-                        if (result.getResult().equals("success")){
-                            String electFee = result.getElectricityFee();
-                            String waterFee = result.getWaterFee();
-                            String publicFee = result.getPublicFee();
-                            String individualFee = result.getIndividualFee();
+                            if (result.getResult().equals("success")){
+                                String electFee = result.getElectricityFee();
+                                String waterFee = result.getWaterFee();
+                                String publicFee = result.getPublicFee();
+                                String individualFee = result.getIndividualFee();
 
-                            DetailResponse detailResponse = new DetailResponse();
-                            detailResponse.setElectricityFee(electFee);
-                            detailResponse.setWaterFee(waterFee);
-                            detailResponse.setPublicFee(publicFee);
-                            detailResponse.setIndividualFee(individualFee);
+                                DetailResponse detailResponse = new DetailResponse();
+                                detailResponse.setElectricityFee(electFee);
+                                detailResponse.setWaterFee(waterFee);
+                                detailResponse.setPublicFee(publicFee);
+                                detailResponse.setIndividualFee(individualFee);
 
-                            Intent intent = new Intent(HomeActivity.this,DetailActivity.class);
-                            intent.putExtra("detail", detailResponse);
-                            startActivity(intent);
+                                Intent intent = new Intent(HomeActivity.this,DetailActivity.class);
+                                intent.putExtra("detail", detailResponse);
+                                startActivity(intent);
+                            }
+                            else if(result.getResult().equals("fail")) {
+
+                            }
                         }
-                        else if(result.getResult().equals("fail")) {
+
+                        @Override
+                        public void onFailure(Call<DetailResponse> call, Throwable t) {
 
                         }
-                    }
-
-                    @Override
-                    public void onFailure(Call<DetailResponse> call, Throwable t) {
-
-                    }
-                });
+                    });
+                } else {
+                    AlertDialog.Builder alBuilder = new AlertDialog.Builder(HomeActivity.this);
+                    alBuilder.setMessage("고지서를 등록해주세요.");
+                }
 
             }
         });
@@ -250,16 +316,6 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
-        // 고지서 예측
-        btn_bill_pre = (Button)findViewById(R.id.btn_bill_pre);
-        btn_bill_pre.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,PredictionActivity.class);
-                startActivity(intent);
-            }
-        });
-
         // EggoAI
         btn_eggo_ai = (Button)findViewById(R.id.btn_eggo_ai);
         btn_eggo_ai.setOnClickListener(new View.OnClickListener() {
@@ -270,15 +326,6 @@ public class HomeActivity extends AppCompatActivity  {
             }
         });
 
-        //에너지 절약법
-        btn_energy_save = (Button)findViewById(R.id.btn_energy_save);
-        btn_energy_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,EnergyActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
         // 프레그먼트 설정

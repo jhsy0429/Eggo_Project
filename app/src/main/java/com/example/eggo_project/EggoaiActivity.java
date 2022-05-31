@@ -62,10 +62,13 @@ public class EggoaiActivity extends AppCompatActivity {
                             RealTimeResponse result = response.body();
 
                             if (result.getResult().equals("success")) {
-                                String electFee = result.getElectFee();
-                                result.setElectFee(electFee);
+                                String electUse = result.getElectUse();
+                                result.setElectFee(electUse);
 
-                                text_pre.setText("예측된 전기 요금 : " + electFee);
+                                Toast.makeText(EggoaiActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                                System.out.println(electUse);
+
+                                text_pre.setText("예측된 전기량 : " + electUse);
                             }
                             else if (result.getResult().equals("fail")) {
                                 //Toast.makeText(EggoaiActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();

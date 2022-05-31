@@ -38,7 +38,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText edit_id, edit_pwd;
-    private Button btn_login, btn_join, btn_find;
+    private Button btn_login, btn_join;
     private AlertDialog dialog;
     private RetrofitAPI retrofitAPI;
     private List<UserDTO> userDto;

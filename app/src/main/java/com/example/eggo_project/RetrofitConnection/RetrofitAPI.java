@@ -1,14 +1,5 @@
 package com.example.eggo_project.RetrofitConnection;
 
-import android.graphics.Paint;
-
-import com.google.gson.JsonObject;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.List;
-
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -64,7 +55,7 @@ public interface RetrofitAPI {
 
     // 이미지 전송
     @Multipart
-    @POST("/scanPhoto")
+    @POST("/scanPhotoTest")
     Call<RegResponse> BillReg(@Part MultipartBody.Part billImg);
 
     // 자세히 보기(원그래프)
@@ -80,6 +71,20 @@ public interface RetrofitAPI {
     Call<RegResponse> BillIn(
             @Query("userId") String userId,
             @Query("date") String date);
+
+    // 고지서 수정하기
+    @FormUrlEncoded
+    @POST("/main/update")
+    Call<RegResponse> BillUpdate(
+            @Field("UserId") String userId,
+            @Field("date") String date,
+            @Field("electUse") String electUse,
+            @Field("waterUse") String waterUse,
+            @Field("electFee") String electFee,
+            @Field("waterFee") String waterFee,
+            @Field("publicFee") String publicFee,
+            @Field("totalFee") String totalFee
+    );
 
     // 실시간 요금 검색(1시간)
     @GET("/realTimeData")

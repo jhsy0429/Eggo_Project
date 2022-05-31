@@ -61,6 +61,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private RegResponse regResponse;
     private String mediaPath;
     private EditText text_date, electUse, waterUse, electFee, waterFee, publicFee, totalFee;
+    private String date, elect_Use, water_Use, elect_Fee, water_Fee, public_Fee, total_Fee;
     private AlertDialog dialog;
 
     private static final int REQUEST_CODE = 0; // 사진 요청 코드
@@ -103,6 +104,8 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -115,7 +118,7 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goImage();
+               // goImage();
             }
         });
 
@@ -138,13 +141,13 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String date = text_date.getText().toString();
-                String elect_Use = electUse.getText().toString();
-                String water_Use = waterUse.getText().toString();
-                String elect_Fee = electFee.getText().toString();
-                String water_Fee = waterFee.getText().toString();
-                String public_Fee = publicFee.getText().toString();
-                String total_Fee = totalFee.getText().toString();
+                date = text_date.getText().toString();
+                elect_Use = electUse.getText().toString();
+                water_Use = waterUse.getText().toString();
+                elect_Fee = electFee.getText().toString();
+                water_Fee = waterFee.getText().toString();
+                public_Fee = publicFee.getText().toString();
+                total_Fee = totalFee.getText().toString();
 
                 if (date.equals("") || elect_Use.equals("") || water_Use.equals("")
                         || elect_Fee.equals("") || water_Fee.equals("")
@@ -194,6 +197,11 @@ public class RegistrationActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
+
     // 카메라로 촬영한 사진의 썸네일을 가져와 이미지뷰에 띄우기
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -209,36 +217,35 @@ public class RegistrationActivity extends AppCompatActivity {
                         String path = "C:\\Users\\gjhsy\\Desktop\\retrofit_sample\\image.jpg";
 
                         //BitmapConvertFile(bitmap, path);
-                        File file = bitmapToFile(bitmap, path);
+                        //File file = bitmapToFile(bitmap, path);
                         //SaveBitmapToFileCache(bitmap, path, "image");
 
 
                         // 이미지 보내기
                         retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
 
-                        RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), file);
+                        RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), String.valueOf(bitmap));
                         MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "image.jpg", fileBody);
 
-//                        retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
-//                            @Override
-//                            public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
-//                                RegResponse result = response.body();
-//
-//
-//                                if(result.getResult().equals("success")){
-//                                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//                                else if (result.getResult().equals("fail")){
-//                                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//
-//                            }
-//
-//                            @Override
-//                            public void onFailure(Call<RegResponse> call, Throwable t) {
-//
-//                            }
-//                        });
+                        retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
+                            @Override
+                            public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
+                                RegResponse result = response.body();
+
+                                if(result.getResult().equals("success")){
+                                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                                else if (result.getResult().equals("fail")){
+                                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<RegResponse> call, Throwable t) {
+
+                            }
+                        });
                     }
 
                 }
@@ -252,12 +259,85 @@ public class RegistrationActivity extends AppCompatActivity {
                     Uri uri = intent.getData();
                     Glide.with(getApplicationContext()).load(uri).into(imageView); // 이미지뷰띄우기
 
-                    //커서 사용해서 경로 확인
-                    Cursor cursor = getContentResolver().query(Uri.parse(uri.toString()), null, null, null, null);
-                    assert cursor != null;
-                    cursor.moveToFirst();
-                    mediaPath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
-                    System.out.println(mediaPath);
+
+
+
+                    //mediaPath = getRealPathFromURI(uri);
+
+
+                    Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                    if (cursor == null) {
+                        mediaPath = uri.getPath();
+                    } else {
+                        cursor.moveToFirst();
+                        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                        mediaPath = cursor.getString(idx);
+                        cursor.close();
+                    }
+
+                    retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
+
+                    RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), mediaPath);
+                    MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "image.jpg", fileBody);
+
+                    System.out.println("mediaPath: " + mediaPath);
+                    System.out.println("fileBody: " + fileBody.getClass().getName());
+                    System.out.println("filePart: " + filePart.getClass().getName());
+
+                    retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
+                        @Override
+                        public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
+                            RegResponse result = response.body();
+
+                            System.out.println("mediaPath: " + mediaPath);
+                            System.out.println("fileBody: " + fileBody.getClass().getName());
+                            System.out.println("filePart: " + filePart.getClass().getName());
+
+                            if(result.getResult().equals("success")){
+                                Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                date = result.getDate();
+                                elect_Use = result.getElectricityUsage();
+                                water_Use = result.getWaterUsage();
+                                elect_Fee = result.getElectricityFee();
+                                water_Fee = result.getWaterFee();
+                                public_Fee = result.getPublicFee();
+                                total_Fee = result.getTotalFee();
+
+                                text_date.setText(date);
+                                electUse.setText(elect_Use);
+                                waterUse.setText(water_Use);
+                                electFee.setText(elect_Fee);
+                                waterFee.setText(water_Fee);
+                                publicFee.setText(public_Fee);
+                                totalFee.setText(total_Fee);
+
+                            }
+                            else if (result.getResult().equals("fail")){
+                                Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<RegResponse> call, Throwable t) {
+
+                        }
+                    });
+
+
+
+
+//
+//                    //커서 사용해서 경로 확인
+//                    Cursor cursor = getContentResolver().query(Uri.parse(uri.toString()), null, null, null, null);
+//                    assert cursor != null;
+//                    cursor.moveToFirst();
+//                    mediaPath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+//                    System.out.println(mediaPath);
+
+
+
 
                 } catch (Exception e) {
 
@@ -379,6 +459,20 @@ public class RegistrationActivity extends AppCompatActivity {
         if(mediaPath != null) {
 
         }
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String filePath;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) {
+            filePath = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            filePath = cursor.getString(idx);
+            cursor.close();
+        }
+        return filePath;
     }
 
     // 터치로 화면 내리기
