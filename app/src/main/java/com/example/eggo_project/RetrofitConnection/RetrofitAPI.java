@@ -74,7 +74,7 @@ public interface RetrofitAPI {
 
     // 고지서 수정하기
     @FormUrlEncoded
-    @POST("/main/update")
+    @POST("/bill/update")
     Call<RegResponse> BillUpdate(
             @Field("UserId") String userId,
             @Field("date") String date,

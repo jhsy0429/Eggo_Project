@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.eggo_project.RetrofitConnection.DataListResponse;
+import com.example.eggo_project.RetrofitConnection.DetailData;
 import com.example.eggo_project.RetrofitConnection.DetailResponse;
 import com.example.eggo_project.RetrofitConnection.JoinResponse;
 import com.example.eggo_project.RetrofitConnection.LoginData;
@@ -37,6 +39,10 @@ import com.example.eggo_project.RetrofitConnection.RegResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.example.eggo_project.RetrofitConnection.UserDTO;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+import com.google.android.gms.common.internal.service.Common;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -48,6 +54,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.CookieJar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,8 +80,10 @@ public class HomeActivity extends AppCompatActivity  {
     public static String format_yyyyMM = "yyyyMM";
     private String date, lastMonth;
     private List<UserDTO> userDto;
+    private DetailData detailData;
 
     private RetrofitAPI retrofitAPI;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,8 +153,6 @@ public class HomeActivity extends AppCompatActivity  {
 
 
 
-
-
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -153,7 +160,6 @@ public class HomeActivity extends AppCompatActivity  {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true); // 툴바 커스텀
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu); // 메뉴 버튼 모양 설정
-
 
         navigationView = findViewById(R.id.navigation);
         drawerLayout = findViewById(R.id.drawer);
@@ -236,17 +242,6 @@ public class HomeActivity extends AppCompatActivity  {
 
 
 
-        // 정보 수정하기
-//        btn_modify = (Button)findViewById(R.id.btn_modify);
-//        btn_modify.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(HomeActivity.this,ModifyActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-
         // 자세히보기
         btn_look = (Button)findViewById(R.id.btn_look);
         btn_look.setOnClickListener(new View.OnClickListener() {
@@ -261,19 +256,21 @@ public class HomeActivity extends AppCompatActivity  {
                             DetailResponse result = response.body();
 
                             if (result.getResult().equals("success")){
-                                String electFee = result.getElectricityFee();
-                                String waterFee = result.getWaterFee();
-                                String publicFee = result.getPublicFee();
-                                String individualFee = result.getIndividualFee();
+                                detailData = result.getData();
 
-                                DetailResponse detailResponse = new DetailResponse();
-                                detailResponse.setElectricityFee(electFee);
-                                detailResponse.setWaterFee(waterFee);
-                                detailResponse.setPublicFee(publicFee);
-                                detailResponse.setIndividualFee(individualFee);
+                                String electFee = detailData.getElectricityFee();
+                                String waterFee = detailData.getWaterFee();
+                                String publicFee = detailData.getPublicFee();
+                                String individualFee = detailData.getPublicFee();
+
+                                DetailData detailData2 = new DetailData();
+                                detailData2.setElectricityFee(electFee);
+                                detailData2.setWaterFee(waterFee);
+                                detailData2.setPublicFee(publicFee);
+                                detailData2.setIndividualFee(individualFee);
 
                                 Intent intent = new Intent(HomeActivity.this,DetailActivity.class);
-                                intent.putExtra("detail", detailResponse);
+                                intent.putExtra("detail", detailData2);
                                 startActivity(intent);
                             }
                             else if(result.getResult().equals("fail")) {

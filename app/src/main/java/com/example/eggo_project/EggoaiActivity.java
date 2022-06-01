@@ -1,6 +1,7 @@
 package com.example.eggo_project;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ public class EggoaiActivity extends AppCompatActivity {
     private TextView text_pre;
     private RetrofitAPI retrofitAPI;
     private AlertDialog dialog;
+    private ProgressDialog progress;
 
 
     @Override
@@ -47,28 +49,36 @@ public class EggoaiActivity extends AppCompatActivity {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String si = text_si.getText().toString();
-                String gu = text_gu.getText().toString();
-                String dong = text_dong.getText().toString();
+                progress = new ProgressDialog( EggoaiActivity.this);
+                progress.setMessage("Uploading...");
+                progress.show();
+
+                String si = text_si.getText().toString().trim();
+                String gu = text_gu.getText().toString().trim();
+                String dong = text_dong.getText().toString().trim();
 
                 if (si.equals("") || gu.equals("") || dong.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(EggoaiActivity.this);
                     dialog = builder.setMessage("주소를 입력해주세요.").setPositiveButton("확인",null).create();
                     dialog.show();
                 } else if (!(si.equals("") && gu.equals("") && dong.equals(""))){
+                    System.out.println("=============1=============");
                     retrofitAPI.RealTimeData(si, gu, dong).enqueue(new Callback<RealTimeResponse>() {
                         @Override
                         public void onResponse(Call<RealTimeResponse> call, Response<RealTimeResponse> response) {
+                            System.out.println("=============2=============");
+                            progress.dismiss();
                             RealTimeResponse result = response.body();
+                            System.out.println(result.getResult());
 
                             if (result.getResult().equals("success")) {
                                 String electUse = result.getElectUse();
-                                result.setElectFee(electUse);
+                                //result.setElectUse(electUse);
 
                                 Toast.makeText(EggoaiActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                                 System.out.println(electUse);
 
-                                text_pre.setText("예측된 전기량 : " + electUse);
+                                text_pre.setText("예측된 전기량(kw) : " + electUse);
                             }
                             else if (result.getResult().equals("fail")) {
                                 //Toast.makeText(EggoaiActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();

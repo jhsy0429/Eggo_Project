@@ -1,69 +1,58 @@
 package com.example.eggo_project.RetrofitConnection;
 
+import com.google.gson.annotations.SerializedName;
+
 public class BillDTO {
+    @SerializedName("date") private String date; // 날짜
+    @SerializedName("electUse") private String electUse; // 전기사용량
+    @SerializedName("waterUse") private String waterUse; // 수도사용량
+    @SerializedName("electFee") private String electFee; // 전기요금
+    @SerializedName("waterFee") private String waterFee; // 수도요금
+    @SerializedName("publicFee") private String publicFee; // 공공요금
+    @SerializedName("totalFee") private String totalFee; // 총요금
 
-    //필요한 필드값
-    private String UserId;
-    private String Date;
-    private int TotalFee;
-    private int WaterFee;
-    private int WaterUsage;
-    private int ElectricityFee;
-    private int ElectricityUsage;
-
-    public BillDTO(String UserId, String Date, int TotalFee, int WaterFee, int WaterUsage, int ElectricityFee, int ElectricityUsage) {
-        this.UserId = UserId;
-        this.Date = Date;
-        this.TotalFee =TotalFee;
-        this.WaterFee=WaterFee;
-        this.WaterUsage=WaterUsage;
-        this.ElectricityFee=ElectricityFee;
-        this.ElectricityUsage=ElectricityUsage;
-    }
-
-    //출력
-    public String getUserId() {
-        return UserId;
-    }
     public String getDate() {
-        return Date;
+        return date;
     }
-    public int getTotalFee() {
-        return TotalFee;
+    public String getElectricityUsage() {
+        return electUse;
     }
-    public int getWaterFee() {
-        return WaterFee;
+    public String getWaterUsage() {
+        return waterUse;
     }
-    public int getWaterUsage() {
-        return WaterUsage;
+    public String getElectricityFee() {
+        return electFee;
     }
-    public int getElectricityFee() {
-        return ElectricityFee;
+    public String getWaterFee() {
+        return waterFee;
     }
-    public int getElectricityUsage() {
-        return ElectricityUsage;
+    public String getPublicFee() {
+        return publicFee;
+    }
+    public String getTotalFee() {
+        return totalFee;
     }
 
-    //입력
-    public void setUserId(String UserId) {
-        this.UserId = UserId;
+    public void setDate(String date) {
+        this.date = date;
     }
-    public void setDate(String Date) {
-        this.Date = Date;
+    public void setElectricityUsage(String electUse) {
+        this.electUse = electUse;
     }
-    public void setTotalFee(int TotalFee) {
-        this.TotalFee = TotalFee;
+    public void setWaterUsage(String waterUse) {
+        this.waterUse = waterUse;
     }
-    public void setWaterFee(int WaterFee) {
-        this.WaterFee=WaterFee;
+    public void setElectricityFee(String electFee) {
+        this.electFee = electFee;
     }
-    public void setWaterUsage(int WaterUsage) {
-        this.WaterUsage=WaterUsage;
+    public void setWaterFee(String waterFee) {
+        this.waterFee = waterFee;
     }
-    public void setElectricityFee(int ElectricityFee) {
-        this.ElectricityFee=ElectricityFee;
+    public void setPublicFee(String publicFee) {
+        this.publicFee = publicFee;
     }
-    public void setElectricityUsage(int ElectricityUsage) {
-        this.ElectricityUsage=ElectricityUsage;
+    public void setTotalFee(String totalFee) {
+        this.totalFee = totalFee;
     }
+
 }

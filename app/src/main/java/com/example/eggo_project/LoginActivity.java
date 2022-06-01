@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.CookieManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +23,9 @@ import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.example.eggo_project.RetrofitConnection.UserDTO;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -31,6 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogRecord;
 
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,6 +49,10 @@ public class LoginActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private RetrofitAPI retrofitAPI;
     private List<UserDTO> userDto;
+
+
+    public static String URL = "http://www.srctree.co.kr/myserver/";//base url
+    public static CookieJar cookieJar = null;
 
 
     @Override
@@ -73,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
-
 
     }
 

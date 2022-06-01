@@ -1,17 +1,25 @@
 package com.example.eggo_project;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,106 +27,92 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import com.bumptech.glide.Glide;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.eggo_project.RetrofitConnection.LoginData;
-import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.example.eggo_project.RetrofitConnection.RegResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
 import com.example.eggo_project.RetrofitConnection.RetrofitClient;
 import com.example.eggo_project.RetrofitConnection.UserCheck;
-import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.http.Multipart;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    Button btn_camera, btn_photo, btn_reg, btn_send;
+    private ImageView img;
+    private Button btn_capture, btn_gallery, btn_send, btn_reg;
+    private ProgressDialog progress;
 
-    ImageView imageView;
-    final private static String TAG = "RegistrationActivity";
-    final static int TAKE_PICTURE = 1;
-    private RetrofitAPI retrofitAPI;
-    private RegResponse regResponse;
-    private String mediaPath;
+    private RequestQueue queue;
+    private String currentPhotoPath;
+    private Bitmap bitmap;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int GET_GALLERY_IMAGE = 2;
+
+    static final String TAG = "카메라";
+    private String imageString;
+
     private EditText text_date, electUse, waterUse, electFee, waterFee, publicFee, totalFee;
     private String date, elect_Use, water_Use, elect_Fee, water_Fee, public_Fee, total_Fee;
     private AlertDialog dialog;
 
-    private static final int REQUEST_CODE = 0; // 사진 요청 코드
+    private RetrofitAPI retrofitAPI;
+    private RegResponse regResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_reg);
 
-        btn_camera = (Button) findViewById(R.id.btn_camera);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        //btn_camera.setOnClickListener(this);
+        init();
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.e(TAG, "권한 설정 완료");
-            } else {
-                Log.e(TAG, "권한 설정 요청");
-                ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            }
-        }
-
-        // 사진 찍기 버튼을 눌러 카메라 화면으로 이동 및 촬영
-        btn_camera.setOnClickListener(new View.OnClickListener() {
+        // 사진 촬영하기
+        btn_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.btn_camera:
-                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(cameraIntent, TAKE_PICTURE);
-                        break;
-                }
+                camera_open_intent();
             }
         });
 
-        btn_photo = (Button) findViewById(R.id.btn_photo);
-        // 갤러리에서 사진가져오기
-        btn_photo.setOnClickListener(new View.OnClickListener() {
+        // 갤러리에서 사진 가져오기
+        btn_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, REQUEST_CODE);
+            public void onClick(View v) {
+                gallery_open_intent();
             }
         });
 
-        btn_send = (Button) findViewById(R.id.btn_send);
-        // 사진 전송하기
+        // 이미지 전송하기
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-               // goImage();
+            public void onClick(View v) {
+                progress = new ProgressDialog( RegistrationActivity.this);
+                progress.setMessage("Uploading...");
+                progress.show();
+
+                sendImage();
             }
         });
 
@@ -141,14 +135,14 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                date = text_date.getText().toString();
-                elect_Use = electUse.getText().toString();
-                water_Use = waterUse.getText().toString();
-                elect_Fee = electFee.getText().toString();
-                water_Fee = waterFee.getText().toString();
-                public_Fee = publicFee.getText().toString();
-                total_Fee = totalFee.getText().toString();
-
+                date = text_date.getText().toString().trim();
+                elect_Use = electUse.getText().toString().trim();
+                water_Use = waterUse.getText().toString().trim();
+                elect_Fee = electFee.getText().toString().trim();
+                water_Fee = waterFee.getText().toString().trim();
+                public_Fee = publicFee.getText().toString().trim();
+                total_Fee = totalFee.getText().toString().trim();
+                System.out.println("value:"+date+"/type:"+date.getClass().getName());
                 if (date.equals("") || elect_Use.equals("") || water_Use.equals("")
                         || elect_Fee.equals("") || water_Fee.equals("")
                         || public_Fee.equals("") || total_Fee.equals("")) {
@@ -163,7 +157,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
                     retrofitAPI.Register(userId, date, elect_Use, water_Use, elect_Fee, water_Fee, public_Fee, total_Fee).enqueue(new Callback<UserCheck>() {
                         @Override
-                        public void onResponse(Call<UserCheck> call, Response<UserCheck> response) {
+                        public void onResponse(Call<UserCheck> call, retrofit2.Response<UserCheck> response) {
                             UserCheck result = response.body();
 
                             if (result.getResult().equals("success")) {
@@ -184,295 +178,236 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
-    // 카메라 권한 요청
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG, "onRequestPermissionsResult");
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            Log.e(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
-        }
-    }
+    //이미지 플라시크로 전송
+    private void sendImage() {
+
+        //비트맵 이미지를 byte로 변환 -> base64형태로 변환
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
 
+        //base64형태로 변환된 이미지 데이터를 플라스크 서버로 전송
+        String flask_url = "http://192.168.219.112:5001/getPhoto";
+        StringRequest request = new StringRequest(Request.Method.POST, flask_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progress.dismiss();
 
+                        String getBill[] = response.split("-");
 
+                        date = getBill[0];
+                        elect_Use = getBill[1];
+                        water_Use = getBill[2];
+                        elect_Fee = getBill[3];
+                        water_Fee = getBill[4];
+                        public_Fee = getBill[5];
+                        total_Fee = getBill[6];
 
-
-    // 카메라로 촬영한 사진의 썸네일을 가져와 이미지뷰에 띄우기
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-
-        switch (requestCode) {
-            case TAKE_PICTURE:
-                if (resultCode == RESULT_OK && intent.hasExtra("data")) {
-                    Bitmap bitmap = (Bitmap) intent.getExtras().get("data");
-                    if (bitmap != null) {
-                        imageView.setImageBitmap(bitmap);
-
-                        String path = "C:\\Users\\gjhsy\\Desktop\\retrofit_sample\\image.jpg";
-
-                        //BitmapConvertFile(bitmap, path);
-                        //File file = bitmapToFile(bitmap, path);
-                        //SaveBitmapToFileCache(bitmap, path, "image");
-
-
-                        // 이미지 보내기
-                        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
-
-                        RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), String.valueOf(bitmap));
-                        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "image.jpg", fileBody);
-
-                        retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
-                            @Override
-                            public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
-                                RegResponse result = response.body();
-
-                                if(result.getResult().equals("success")){
-                                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                                else if (result.getResult().equals("fail")){
-                                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<RegResponse> call, Throwable t) {
-
-                            }
-                        });
+                        text_date.setText(date);
+                        electUse.setText(elect_Use);
+                        waterUse.setText(water_Use);
+                        electFee.setText(elect_Fee);
+                        waterFee.setText(water_Fee);
+                        publicFee.setText(public_Fee);
+                        totalFee.setText(total_Fee);
                     }
-
-                }
-                break;
-        }
-
-        // 갤러리에서 사진호출 후 통신
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                try {
-                    Uri uri = intent.getData();
-                    Glide.with(getApplicationContext()).load(uri).into(imageView); // 이미지뷰띄우기
-
-
-
-
-                    //mediaPath = getRealPathFromURI(uri);
-
-
-                    Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-                    if (cursor == null) {
-                        mediaPath = uri.getPath();
-                    } else {
-                        cursor.moveToFirst();
-                        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-                        mediaPath = cursor.getString(idx);
-                        cursor.close();
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progress.dismiss();
+                        Toast.makeText( RegistrationActivity.this, "Some error occurred -> "+error, Toast.LENGTH_LONG).show();
                     }
-
-                    retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
-
-                    RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), mediaPath);
-                    MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "image.jpg", fileBody);
-
-                    System.out.println("mediaPath: " + mediaPath);
-                    System.out.println("fileBody: " + fileBody.getClass().getName());
-                    System.out.println("filePart: " + filePart.getClass().getName());
-
-                    retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
-                        @Override
-                        public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
-                            RegResponse result = response.body();
-
-                            System.out.println("mediaPath: " + mediaPath);
-                            System.out.println("fileBody: " + fileBody.getClass().getName());
-                            System.out.println("filePart: " + filePart.getClass().getName());
-
-                            if(result.getResult().equals("success")){
-                                Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-
-                                date = result.getDate();
-                                elect_Use = result.getElectricityUsage();
-                                water_Use = result.getWaterUsage();
-                                elect_Fee = result.getElectricityFee();
-                                water_Fee = result.getWaterFee();
-                                public_Fee = result.getPublicFee();
-                                total_Fee = result.getTotalFee();
-
-                                text_date.setText(date);
-                                electUse.setText(elect_Use);
-                                waterUse.setText(water_Use);
-                                electFee.setText(elect_Fee);
-                                waterFee.setText(water_Fee);
-                                publicFee.setText(public_Fee);
-                                totalFee.setText(total_Fee);
-
-                            }
-                            else if (result.getResult().equals("fail")){
-                                Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<RegResponse> call, Throwable t) {
-
-                        }
-                    });
-
-
-
-
-//
-//                    //커서 사용해서 경로 확인
-//                    Cursor cursor = getContentResolver().query(Uri.parse(uri.toString()), null, null, null, null);
-//                    assert cursor != null;
-//                    cursor.moveToFirst();
-//                    mediaPath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
-//                    System.out.println(mediaPath);
-
-
-
-
-                } catch (Exception e) {
-
-                }
-            } else if (resultCode == RESULT_CANCELED) {
-                    return;
-            }
-        }
-
-    }
-
-    private void BitmapConvertFile(Bitmap bitmap, String strFilePath) { // 파일 선언 -> 경로는 파라미터에서 받는다
-        File file = new File(strFilePath);
-        // OutputStream 선언 -> bitmap데이터를 OutputStream에 받아 File에 넣어주는 용도
-        OutputStream out = null;
-        try {
-            // 파일 초기화
-            file.createNewFile();
-            // OutputStream에 출력될 Stream에 파일을 넣어준다
-            out = new FileOutputStream(file);
-            // bitmap 압축
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public static File bitmapToFile( Bitmap bitmap, String path) { // File name like "image.png"
-        //create a file to write bitmap data
-        File file = null;
-        try {
-            file = new File(path);
-            file.createNewFile();
-
-            //Convert bitmap to byte array
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 0 , bos); // YOU can also save it in JPEG
-            byte[] bitmapdata = bos.toByteArray();
-
-            //write the bytes in file
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-            return file;
-        }catch (Exception e){
-            e.printStackTrace();
-            return file; // it will return null
-        }
-    }
-
-    // Bitmap to File
-    public void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath, String filename) {
-
-        File file = new File(strFilePath);
-
-        // If no folders
-        if (!file.exists()) {
-            file.mkdirs();
-            // Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
-        }
-
-        File fileCacheItem = new File(strFilePath + filename);
-        OutputStream out = null;
-
-        try {
-            fileCacheItem.createNewFile();
-            out = new FileOutputStream(fileCacheItem);
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public void goImage(){
-        File file = new File(mediaPath);
-
-        // Uri 타입의 파일경로를 가지는 RequestBody 객체 생성
-        RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), file);
-        // RequestBody로 Multipart.Part 객체 생성
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
-
-        retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
-        retrofitAPI.BillReg(filePart).enqueue(new Callback<RegResponse>() {
+                }){
             @Override
-            public void onResponse(Call<RegResponse> call, Response<RegResponse> response) {
-                RegResponse result = response.body();
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("image", imageString);
 
-                if(result.getResult().equals("success")){
-                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                    RegResponse regResponse = new RegResponse();
-                }
-                else if (result.getResult().equals("fail")){
-                    Toast.makeText(RegistrationActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
+                return params;
             }
-            @Override
-            public void onFailure(Call<RegResponse> call, Throwable t) {
+        };
 
+        // 커스텀 정책 설정
+        request.setRetryPolicy(new com.android.volley.DefaultRetryPolicy(
+                20000,
+                com.android.volley.DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                com.android.volley.DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(request);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Uri picturePhotoURI = Uri.fromFile(new File(currentPhotoPath));
+
+            getBitmap(picturePhotoURI);
+            img.setImageBitmap(bitmap);
+
+            //갤러리에 사진 저장
+            saveFile(currentPhotoPath);
+
+        } else if (requestCode == GET_GALLERY_IMAGE && resultCode == RESULT_OK) {
+            Uri galleryURI = data.getData();
+            //img.setImageURI(galleryURI);
+
+            getBitmap(galleryURI);
+            img.setImageBitmap(bitmap);
+        }
+
+    }
+
+    //Uri에서 bisap
+    private void getBitmap(Uri picturePhotoURI) {
+        try {
+            //서버로 이미지를 전송하기 위한 비트맵 변환하기
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), picturePhotoURI);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //xml에 정의한 view 초기화
+    private void init() {
+        img = findViewById(R.id.imageView);
+        btn_capture = findViewById(R.id.btn_camera);
+        btn_gallery = findViewById(R.id.btn_photo);
+        btn_send = findViewById(R.id.btn_send);
+
+        queue = Volley.newRequestQueue( RegistrationActivity.this);
+
+        requestPermission();
+    }
+
+    //카메라, 쓰기, 읽기 권한 체크/요청
+    private void requestPermission() {
+        //민감한 권한 사용자에게 허용요청
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) { // 저장소에 데이터를 쓰는 권한을 부여받지 않았다면~
+
+            ActivityCompat.requestPermissions( RegistrationActivity.this, new String[]{Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+    }
+
+    //갤러리 띄우기
+    private void gallery_open_intent() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GET_GALLERY_IMAGE);
+    }
+
+    //갤러리 사진 저장 기능
+    private void saveFile(String currentPhotoPath) {
+
+        Bitmap bitmap = BitmapFactory.decodeFile( currentPhotoPath );
+
+        ContentValues values = new ContentValues( );
+
+        //실제 앨범에 저장될 이미지이름
+        values.put( MediaStore.Images.Media.DISPLAY_NAME, new SimpleDateFormat( "yyyyMMdd_HHmmss", Locale.US ).format( new Date( ) ) + ".jpg" );
+        values.put( MediaStore.Images.Media.MIME_TYPE, "image/*" );
+
+        //저장될 경로 -> /내장 메모리/DCIM/ 에 'AndroidQ' 폴더로 지정
+        values.put( MediaStore.Images.Media.RELATIVE_PATH, "DCIM/AndroidQ" );
+
+        Uri u = MediaStore.Images.Media.getContentUri( MediaStore.VOLUME_EXTERNAL );
+        Uri uri = getContentResolver( ).insert( u, values ); //이미지 Uri를 MediaStore.Images에 저장
+
+        try {
+            /*
+             ParcelFileDescriptor: 공유 파일 요청 객체
+             ContentResolver: 어플리케이션끼리 특정한 데이터를 주고 받을 수 있게 해주는 기술(공용 데이터베이스)
+                            ex) 주소록이나 음악 앨범이나 플레이리스트 같은 것에도 접근하는 것이 가능
+
+            getContentResolver(): ContentResolver객체 반환
+            */
+
+            ParcelFileDescriptor parcelFileDescriptor = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                parcelFileDescriptor = getContentResolver( ).openFileDescriptor( uri, "w", null ); //미디어 파일 열기
             }
-        });
+            if ( parcelFileDescriptor == null ) return;
 
-        if(mediaPath != null) {
+            //바이트기반스트림을 이용하여 JPEG파일을 바이트단위로 쪼갠 후 저장
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream( );
+
+            //비트맵 형태 이미지 크기 압축
+            bitmap.compress( Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream );
+            byte[] b = byteArrayOutputStream.toByteArray( );
+            InputStream inputStream = new ByteArrayInputStream( b );
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream( );
+            int bufferSize = 1024;
+            byte[] buffers = new byte[ bufferSize ];
+
+            int len = 0;
+            while ( ( len = inputStream.read( buffers ) ) != -1 ) {
+                buffer.write( buffers, 0, len );
+            }
+
+            byte[] bs = buffer.toByteArray( );
+            FileOutputStream fileOutputStream = new FileOutputStream( parcelFileDescriptor.getFileDescriptor( ) );
+            fileOutputStream.write( bs );
+            fileOutputStream.close( );
+            inputStream.close( );
+            parcelFileDescriptor.close( );
+
+            getContentResolver( ).update( uri, values, null, null ); //MediaStore.Images 테이블에 이미지 행 추가 후 업데이트
+
+        } catch ( Exception e ) {
+            e.printStackTrace( );
+        }
+
+        values.clear( );
+        values.put( MediaStore.Images.Media.IS_PENDING, 0 ); //실행하는 기기에서 앱이 IS_PENDING 값을 1로 설정하면 독점 액세스 권한 획득
+        getContentResolver( ).update( uri, values, null, null );
+
+    }
+
+    //카메라 호출
+    private void camera_open_intent() {
+        Log.d("Camera", "카메라실행!");
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+            File photoFile = null;
+
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.d(TAG, "에러발생!!");
+            }
+
+            if (photoFile != null) {
+                Uri providerURI = FileProvider.getUriForFile(this, "com.example.eggo_project.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
 
         }
     }
 
-    private String getRealPathFromURI(Uri contentURI) {
-        String filePath;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            filePath = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            filePath = cursor.getString(idx);
-            cursor.close();
-        }
-        return filePath;
+    //카메라 촬영 시 임시로 사진을 저장하고 사진위치에 대한 Uri 정보를 가져오는 메소드
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        Log.d(TAG, "사진저장>> "+storageDir.toString());
+
+        currentPhotoPath = image.getAbsolutePath();
+
+        return image;
     }
 
     // 터치로 화면 내리기
@@ -488,4 +423,5 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(ev);
     }
+
 }

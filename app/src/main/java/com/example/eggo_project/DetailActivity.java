@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.eggo_project.RetrofitConnection.DetailData;
 import com.example.eggo_project.RetrofitConnection.DetailResponse;
 import com.example.eggo_project.RetrofitConnection.LoginResponse;
 import com.github.mikephil.charting.animation.Easing;
@@ -27,12 +28,12 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         // 객체에서 응답데이터 받아오기
-        DetailResponse detailResponse = (DetailResponse) getIntent().getSerializableExtra("detail");
+        DetailData detailData = (DetailData) getIntent().getSerializableExtra("detail");
 
-        String electFee = detailResponse.getElectricityFee();
-        String waterFee = detailResponse.getWaterFee();
-        String publicFee = detailResponse.getPublicFee();
-        String individualFee = detailResponse.getIndividualFee();
+        String electFee = detailData.getElectricityFee();
+        String waterFee = detailData.getWaterFee();
+        String publicFee = detailData.getPublicFee();
+        String individualFee = detailData.getIndividualFee();
 
         pieChart = (PieChart)findViewById(R.id.piechart);
 

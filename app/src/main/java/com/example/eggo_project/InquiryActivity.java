@@ -2,8 +2,11 @@ package com.example.eggo_project;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.eggo_project.RetrofitConnection.BillDTO;
 import com.example.eggo_project.RetrofitConnection.LoginData;
 import com.example.eggo_project.RetrofitConnection.RegResponse;
 import com.example.eggo_project.RetrofitConnection.RetrofitAPI;
@@ -32,8 +36,8 @@ public class InquiryActivity extends AppCompatActivity {
     private Button btn_inquiry, btn_modify, btn_success;
     private RetrofitAPI retrofitAPI;
     private AlertDialog dialog;
+    private BillDTO billDTO;
     private boolean change = false; // 조희 -> 수정
-    private boolean update = false; // 수정 -> 완료
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +84,14 @@ public class InquiryActivity extends AppCompatActivity {
                             RegResponse result = response.body();
 
                             if (result.getResult().equals("success")) {
-                                elect_Fee = result.getElectricityFee();
-                                water_Fee = result.getWaterFee();
-                                public_Fee = result.getPublicFee();
-                                elect_Use = result.getElectricityUsage();
-                                water_Use = result.getWaterUsage();
-                                total_Fee = result.getTotalFee();
+                                billDTO = result.getData();
+
+                                elect_Fee = billDTO.getElectricityFee();
+                                water_Fee = billDTO.getWaterFee();
+                                public_Fee = billDTO.getPublicFee();
+                                elect_Use = billDTO.getElectricityUsage();
+                                water_Use = billDTO.getWaterUsage();
+                                total_Fee = billDTO.getTotalFee();
 
                                 electUse.setText(elect_Use);
                                 waterUse.setText(water_Use);
@@ -223,5 +229,19 @@ public class InquiryActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    // 터치로 화면 내리기
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View view = getCurrentFocus();
+        if (view != null && (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) && view instanceof EditText && !view.getClass().getName().startsWith("android.webkit.")) {
+            int scrcoords[] = new int[2];
+            view.getLocationOnScreen(scrcoords);
+            float x = ev.getRawX() + view.getLeft() - scrcoords[0];
+            float y = ev.getRawY() + view.getTop() - scrcoords[1];
+            if (x < view.getLeft() || x > view.getRight() || y < view.getTop() || y > view.getBottom())
+                ((InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow((this.getWindow().getDecorView().getApplicationWindowToken()), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

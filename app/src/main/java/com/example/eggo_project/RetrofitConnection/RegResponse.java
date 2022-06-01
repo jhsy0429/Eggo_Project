@@ -12,6 +12,7 @@ public class RegResponse {
     @SerializedName("totalFee") private String totalFee; // 총요금
 
 
+    @SerializedName("data") private BillDTO data;
 
     @SerializedName("result")
     private String result;
@@ -71,4 +72,7 @@ public class RegResponse {
     public void setTotalFee(String totalFee) {
         this.totalFee = totalFee;
     }
+
+    public BillDTO getData() {return data;}
+    public void setData(BillDTO data) {this.data = data;}
 }
