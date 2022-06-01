@@ -92,6 +92,10 @@ public interface RetrofitAPI {
             @Query("region1") String region1,
             @Query("region2") String region2,
             @Query("region3") String region3);
+
+    // 고지서 예측하기
+    @GET("/predictFee")
+    Call<RegResponse> BillPre(@Query("userId") String userId);
 }
 
 

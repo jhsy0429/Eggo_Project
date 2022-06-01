@@ -62,26 +62,19 @@ public class EggoaiActivity extends AppCompatActivity {
                     dialog = builder.setMessage("주소를 입력해주세요.").setPositiveButton("확인",null).create();
                     dialog.show();
                 } else if (!(si.equals("") && gu.equals("") && dong.equals(""))){
-                    System.out.println("=============1=============");
                     retrofitAPI.RealTimeData(si, gu, dong).enqueue(new Callback<RealTimeResponse>() {
                         @Override
                         public void onResponse(Call<RealTimeResponse> call, Response<RealTimeResponse> response) {
-                            System.out.println("=============2=============");
                             progress.dismiss();
                             RealTimeResponse result = response.body();
-                            System.out.println(result.getResult());
 
                             if (result.getResult().equals("success")) {
                                 String electUse = result.getElectUse();
-                                //result.setElectUse(electUse);
-
-                                Toast.makeText(EggoaiActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                                 System.out.println(electUse);
 
                                 text_pre.setText("예측된 전기량(kw) : " + electUse);
                             }
                             else if (result.getResult().equals("fail")) {
-                                //Toast.makeText(EggoaiActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                                 text_pre.setText(result.getMessage());
                             }
                         }

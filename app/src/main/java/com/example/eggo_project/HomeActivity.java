@@ -62,7 +62,7 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity  {
 
-    private Button btn_look, btn_bill_reg, btn_bill_in, btn_eggo_ai;
+    private Button btn_look, btn_bill_reg, btn_bill_in, btn_eggo_ai, btn_bill_pre;
     private TextView text_name, text_fee;
 
     private Toolbar toolbar;
@@ -74,14 +74,11 @@ public class HomeActivity extends AppCompatActivity  {
     private ElectFragment fragment_elect;
     private WaterFragment fragment_water;
 
-    private String userName;
-    private String userEmail;
-    private String id;
+    private String userName, userEmail, id;
     public static String format_yyyyMM = "yyyyMM";
     private String date, lastMonth;
     private List<UserDTO> userDto;
     private DetailData detailData;
-
     private RetrofitAPI retrofitAPI;
 
 
@@ -308,6 +305,17 @@ public class HomeActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this,InquiryActivity.class);
+                intent.putExtra("id", loginData);
+                startActivity(intent);
+            }
+        });
+
+        // 고지서 예측
+        btn_bill_pre = (Button)findViewById(R.id.btn_bill_pre);
+        btn_bill_pre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, PredictionActivity.class);
                 intent.putExtra("id", loginData);
                 startActivity(intent);
             }

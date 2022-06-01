@@ -2,7 +2,9 @@ package com.example.eggo_project.RetrofitConnection;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RegResponse {
+import java.io.Serializable;
+
+public class RegResponse implements Serializable {
     @SerializedName("date") private String date; // 날짜
     @SerializedName("electUse") private String electUse; // 전기사용량
     @SerializedName("waterUse") private String waterUse; // 수도사용량
@@ -10,6 +12,9 @@ public class RegResponse {
     @SerializedName("waterFee") private String waterFee; // 수도요금
     @SerializedName("publicFee") private String publicFee; // 공공요금
     @SerializedName("totalFee") private String totalFee; // 총요금
+    @SerializedName("predictedFee") private String predictedFee; // 이번달 예측
+    @SerializedName("rateOfchange") private  String rateOfchange; // 저번달 대비 변화율
+
 
 
     @SerializedName("data") private BillDTO data;
@@ -49,6 +54,12 @@ public class RegResponse {
     public String getTotalFee() {
         return totalFee;
     }
+    public String getPredictedFee() {
+        return predictedFee;
+    }
+    public String getRateOfchange() {
+        return rateOfchange;
+    }
 
 
     public void setDate(String date) {
@@ -71,6 +82,12 @@ public class RegResponse {
     }
     public void setTotalFee(String totalFee) {
         this.totalFee = totalFee;
+    }
+    public void setPredictedFee(String predictedFee) {
+        this.predictedFee = predictedFee;
+    }
+    public void setRateOfchange(String rateOfchange) {
+        this.rateOfchange = rateOfchange;
     }
 
     public BillDTO getData() {return data;}
