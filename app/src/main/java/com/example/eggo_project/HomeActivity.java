@@ -62,12 +62,13 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity  {
 
-    private Button btn_look, btn_bill_reg, btn_bill_in, btn_eggo_ai, btn_bill_pre;
+    private Button btn_look, btn_bill_reg, btn_bill_in, btn_eggo_ai, btn_bill_pre, btn_logout;
     private TextView text_name, text_fee;
 
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+    private AlertDialog dialog;
 
     private TabLayout tabs;
     private AllFragment fragment_all;
@@ -227,6 +228,13 @@ public class HomeActivity extends AppCompatActivity  {
                     startActivity(intent);
                 }
 
+                // 고지서 예측
+                if (id == R.id.menu_bill_pre) {
+                    Intent intent = new Intent(HomeActivity.this, PredictionActivity.class);
+                    intent.putExtra("id", loginData);
+                    startActivity(intent);
+                }
+
                 // Eggo AI
                 if (id == R.id.menu_eggo_ai) {
                     startActivity(new Intent(HomeActivity.this, EggoaiActivity.class));
@@ -326,8 +334,20 @@ public class HomeActivity extends AppCompatActivity  {
         btn_eggo_ai.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder alBuilder = new AlertDialog.Builder(HomeActivity.this);
+                alBuilder.setMessage("고지서를 등록해주세요.");
+
                 Intent intent = new Intent(HomeActivity.this,EggoaiActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        // 로그아웃
+        btn_logout = (Button)findViewById(R.id.btn_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
             }
         });
 
@@ -418,6 +438,31 @@ public class HomeActivity extends AppCompatActivity  {
             alBuilder.setTitle("프로그램 종료");
             alBuilder.show(); // AlertDialog.Bulider로 만든 AlertDialog를 보여준다.
         }
+    }
+
+    public void showDialog() {
+        AlertDialog.Builder msgBuilder = new AlertDialog.Builder(HomeActivity.this)
+                .setTitle("로그아웃")
+                .setMessage("로그아웃 하시겠습니까?")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(HomeActivity.this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(HomeActivity.this,LoginActivity.class);
+                        startActivity(intent);
+
+                        finish();
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(HomeActivity.this, "로그아웃 취소", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        AlertDialog msgDlg = msgBuilder.create();
+        msgDlg.show();
     }
 
 }

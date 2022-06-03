@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:minHeight="?attr/actionBarSize"
-            android:background="@color/colorEggo">
+            android:background="@color/primaryColor">
 
             <TextView
                 android:layout_width="match_parent"

@@ -13,6 +13,11 @@
             android:title="고지서 조회/변경"
             app:showAsAction="always"/>
 
+        <item
+            android:id="@+id/menu_bill_pre"
+            android:title="고지서 예측"
+            app:showAsAction="always"/>
+
 
         <item
             android:id="@+id/menu_eggo_ai"

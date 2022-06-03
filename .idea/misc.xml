@@ -5,15 +5,16 @@
       <map>
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/drawable/bg_marker.xml" value="0.234" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/drawable/bg_marker_tail.xml" value="0.234" />
+        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/drawable/button_pattern.xml" value="0.188" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_bill_in.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_bill_pre.xml" value="0.24947916666666667" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_bill_reg.xml" value="0.25364583333333335" />
-        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_detail.xml" value="0.1" />
+        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_detail.xml" value="0.2" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_eggo_ai.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_find.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_home.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_join.xml" value="0.25364583333333335" />
-        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_login.xml" value="0.2006340579710145" />
+        <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_menu.xml" value="0.2526041666666667" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_menu2.xml" value="0.2526041666666667" />
         <entry key="..\:/Users/gjhsy/AndroidStudioProjects/Eggo_Project/app/src/main/res/layout/activity_modify.xml" value="0.25364583333333335" />

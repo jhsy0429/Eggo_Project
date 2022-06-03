@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:minHeight="?attr/actionBarSize"
-            android:background="@color/colorEggo">
+            android:background="@color/primaryColor">
 
             <TextView
                 android:layout_width="match_parent"
@@ -70,7 +70,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="left"
                             android:layout_marginLeft="40dp"
-                            android:text="한세린"
+                            android:text="user"
                             android:id="@+id/text_name"
                             android:textSize="25dp" />
 
@@ -243,6 +243,26 @@
                             android:layout_gravity="center"
                             android:text="Eggo ai"
                             android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_logout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="200dp"
+                            android:layout_marginTop="10dp"
+                            android:text="로그아웃"
                             android:textStyle="bold" />
 
                     </LinearLayout>

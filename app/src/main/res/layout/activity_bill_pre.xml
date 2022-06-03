@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:minHeight="?attr/actionBarSize"
-            android:background="@color/colorEggo">
+            android:background="@color/primaryColor">
 
             <TextView
                 android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="이번달 고지서 금액 예측"
+                android:text="예측한 이번달 고지서 금액"
                 android:textSize="30dp" />
 
             <TextView
@@ -64,8 +64,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="저번달 대비 몇%"
-                android:layout_marginTop="10dp"
+                android:text="저번달 대비 상승률"
+                android:layout_marginTop="50dp"
                 android:textSize="30dp"/>
 
             <TextView
@@ -78,9 +78,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="아끼십시오."
-                android:layout_marginTop="100dp"
-                android:textSize="30dp"/>
+                android:text="선풍기는 강,중,약의 조절 정도에 따라 10W의 전력 소모 차이가 나는데 미풍은 강풍에 비해 30% 정도의 절전 효과가 있습니다."
+                android:layout_marginTop="200dp"
+                android:textSize="20dp"/>
 
 
         </LinearLayout>
