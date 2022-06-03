@@ -7,6 +7,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@color/primaryColor">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_marginRight="40dp"
+                android:text="Eggo"
+                android:textColor="@color/colorWhite"
+                android:textSize="24dp"
+                android:textStyle="bold">
+
+            </TextView>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:padding="20dp"
@@ -174,11 +203,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="60dp">
+        android:layout_marginTop="80dp">
 
         <Button
             android:id="@+id/btn_join2"
-            android:layout_width="120dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:textStyle="bold"
             android:text="가입하기" />
