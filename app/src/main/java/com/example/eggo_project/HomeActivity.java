@@ -100,7 +100,6 @@ public class HomeActivity extends AppCompatActivity  {
         text_name = findViewById(R.id.text_name);
         text_name.setText(userName);
 
-
         // 현재 날짜 받아오기(년도,월)
         Date currentTime = Calendar.getInstance().getTime();
         SimpleDateFormat format = new SimpleDateFormat(format_yyyyMM, Locale.getDefault());
@@ -164,7 +163,7 @@ public class HomeActivity extends AppCompatActivity  {
 
         // 헤더 설정
         LinearLayout navigation_container = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.menu_header,null);
-        navigation_container.setBackground(getResources().getDrawable(R.color.colorEggo));
+        navigation_container.setBackground(getResources().getDrawable(R.color.primaryColor));
         navigation_container.setPadding(20, 150, 40, 50);
         navigation_container.setOrientation(LinearLayout.VERTICAL);
         navigation_container.setGravity(Gravity.BOTTOM);
@@ -197,8 +196,6 @@ public class HomeActivity extends AppCompatActivity  {
 
 
         // 네비게이션 헤더에 현재 로그인 중인 사용자를 보여주기 위해 데이터를 가져오는 코드
-        // tv_username.setText(tempName + "님");
-        // tv_useremail.setText(tempEmail);
         tv_username.setText(userName + "님");
         tv_useremail.setText(userEmail);
 

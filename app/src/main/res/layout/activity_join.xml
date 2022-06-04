@@ -100,6 +100,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_join_pw"
+                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -131,6 +132,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_join_pwck"
+                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>

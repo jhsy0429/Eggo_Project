@@ -81,7 +81,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private AlertDialog dialog;
 
     private RetrofitAPI retrofitAPI;
-    private RegResponse regResponse;
+    private boolean validate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,7 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                validate = true;
                 camera_open_intent();
             }
         });
@@ -102,6 +103,7 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                validate = true;
                 gallery_open_intent();
             }
         });
@@ -110,11 +112,18 @@ public class RegistrationActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progress = new ProgressDialog( RegistrationActivity.this);
-                progress.setMessage("Uploading...");
-                progress.show();
 
-                sendImage();
+                if(validate) {
+                    progress = new ProgressDialog( RegistrationActivity.this);
+                    progress.setMessage("Uploading...");
+                    progress.show();
+
+                    sendImage();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+                    dialog = builder.setMessage("사진을 등록해주세요.").setPositiveButton("확인",null).create();
+                    dialog.show();
+                }
             }
         });
 
@@ -179,24 +188,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             }
         });
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼, 디폴트로 true만 해도 백버튼이 생김
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
-                Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
-                startActivity(intent);
-                finish();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-
     }
 
     //이미지 플라시크로 전송
@@ -210,7 +201,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         //base64형태로 변환된 이미지 데이터를 플라스크 서버로 전송
-        String flask_url = "http://192.168.219.112:5001/getPhoto";
+        String flask_url = "http://192.168.1.80:5001/getPhoto";
         StringRequest request = new StringRequest(Request.Method.POST, flask_url,
                 new Response.Listener<String>() {
                     @Override

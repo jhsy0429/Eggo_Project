@@ -64,7 +64,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="저번달 대비 상승률"
+                android:text="작년 동월 대비"
                 android:layout_marginTop="50dp"
                 android:textSize="30dp"/>
 

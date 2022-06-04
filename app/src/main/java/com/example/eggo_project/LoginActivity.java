@@ -46,14 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText edit_id, edit_pwd;
     private Button btn_login, btn_join;
-    private AlertDialog dialog;
     private RetrofitAPI retrofitAPI;
-    private List<UserDTO> userDto;
-
-
-    public static String URL = "http://www.srctree.co.kr/myserver/";//base url
-    public static CookieJar cookieJar = null;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,10 +133,13 @@ public class LoginActivity extends AppCompatActivity {
 //                        // 그래프를 위한 데이터 조회
 //                        getDataList(id);
 
+                        String activityName = "activityLogin";
+
                         Toast.makeText(LoginActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                         intent.putExtra("user", loginResponse);
                         intent.putExtra("id", loginData);
+
                         startActivity(intent);
                     }
                     else if (result.getResult().equals("fail")) {
