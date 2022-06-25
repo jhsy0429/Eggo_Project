@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="215dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="20dp"
         android:background="@null"
         android:gravity="center"
         android:src="@drawable/eggo_title1" />
@@ -61,12 +61,18 @@
         android:textStyle="bold"
         android:layout_gravity="center"/>
 
+    <Button
+        android:id="@+id/btn_find"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="ID/PW 찾기"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
 
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
-        android:layout_height="240dp"
+        android:layout_height="215dp"
         android:background="@null"
         android:gravity="center"
         android:src="@drawable/eggo_character" />

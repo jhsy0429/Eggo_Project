@@ -45,7 +45,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText edit_id, edit_pwd;
-    private Button btn_login, btn_join;
+    private Button btn_login, btn_join, btn_find;
     private RetrofitAPI retrofitAPI;
 
     @Override
@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         edit_pwd = findViewById(R.id.edit_pwd);
         btn_login = (Button)findViewById(R.id.btn_login);
         btn_join = (Button)findViewById(R.id.btn_join);
+        btn_find = (Button)findViewById(R.id.btn_find);
 
         retrofitAPI = RetrofitClient.getClient().create(RetrofitAPI.class);
 
@@ -69,6 +70,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //btn_find Button의 Click이벤트(아이디/패스워드 찾기 페이지로 이동)
+        btn_find.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this,FindActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // 로그인 시도
         btn_login.setOnClickListener(new View.OnClickListener() {

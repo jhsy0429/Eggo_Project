@@ -40,6 +40,9 @@
         <activity android:name=".EggoaiActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".PredictionActivity" />
+        <activity android:name=".FindActivity" />
+        <activity android:name=".FindIdActivity" />
+        <activity android:name=".FindPwActivity" />
 
         <meta-data
             android:name="android.max_aspect"
